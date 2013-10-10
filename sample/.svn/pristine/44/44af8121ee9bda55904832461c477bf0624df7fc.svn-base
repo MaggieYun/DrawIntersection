@@ -1,0 +1,39 @@
+package net.yhte.gis.xzyun.api;
+
+/**
+ * @author 许照云
+ *
+ */
+public class GetPixel{
+	private static double MinLatitude = -85.051128;
+	private static double MaxLatitude = 85.05112878;
+	private static double MinLongitude = -180;
+	private static double MaxLongitude = 180;
+	// 节省内存
+/**
+	 * 
+	 * @param latitude 给定的纬度
+	 * @param longitude 给定的经度
+	 * @param levelOfDetail 等级范围
+	 * @return 地理坐标转换为的像素坐标值
+	 */
+	public static Pixel LatLongToPixelXY(double latitude, double longitude,
+			int levelOfDetail) {
+		latitude = Clip.clip(latitude, MinLatitude, MaxLatitude);
+		longitude = Clip.clip(longitude, MinLongitude, MaxLongitude);
+
+		double x = (longitude + 180) / 360;
+		double sinLatitude = Math.sin(latitude * Math.PI / 180);
+		double y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude))
+				/ (4 * Math.PI);
+
+		int mapSize = MapSize.mapsize(levelOfDetail);
+		int pixelX = (int) Clip.clip(x * mapSize + 0.5, 0, mapSize - 1);
+		int pixelY = (int) Clip.clip(y * mapSize + 0.5, 0, mapSize - 1);
+
+		Pixel pixel = new Pixel();
+		pixel.x = pixelX;
+		pixel.y = pixelY;
+		return pixel;
+	}
+}

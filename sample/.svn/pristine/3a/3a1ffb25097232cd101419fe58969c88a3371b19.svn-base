@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>jqMap</title>
+        <meta charset="utf-8" />
+        <style type="text/css">
+            div{border:solid #cccccc 1px;}
+        </style>
+        <script type="text/javascript" src="javascript/jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" src="jqMap.js"></script>
+    </head>
+    <body>
+        <div id="map"></div>
+    </body>
+    <script type="text/javascript">
+    $(function(){
+    	
+    	//创建地图对象
+    	var map = $("#map").jqMap();
+    	
+    	//链式调用
+        map.setSize([512,512])
+            .setBbox([120.50122227081,31.500494196018,121.00122430454,32.000496229746])
+            .setUrl("http://172.16.60.32:6666/rest/igate/3/export")
+            .show()
+            .activate("zoomIn");
+    });
+    </script>
+</html>

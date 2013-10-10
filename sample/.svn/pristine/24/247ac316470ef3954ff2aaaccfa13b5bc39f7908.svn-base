@@ -1,0 +1,44 @@
+
+        //判断是否在范围内
+        var Judge=function(str1,str2,str3,str4){ 
+			if(parseFloat(str1)>=-180 && parseFloat(str1)<=180){
+				if(parseFloat(str2)>=-85 && parseFloat(str2)<=85){
+					if(parseFloat(str3)>=-180 && parseFloat(str3)<=180){
+						if(parseFloat(str4)>=-85 && parseFloat(str4)<=85){
+							return true;
+						}else return false;
+					}else return false;
+				}else return false;
+			}else return false;	
+
+        };
+        
+        var showHint=function(){
+            var str1=document.getElementById("x1").value;
+            var str2=document.getElementById("y1").value;
+            var str3=document.getElementById("x2").value;
+            var str4=document.getElementById("y2").value;
+            var str5=document.getElementById("fromrange").value;
+            var str6=document.getElementById("torange").value;
+            //var str7=document.getElementById("ithread").value;
+            var boolead1=Judge(str1,str2,str3,str4);
+            console.log(boolead1);
+            if(boolead1==false){
+                document.getElementById("txtHint").innerHTML="输入错误请重新输入";
+            }else{
+            var xmlhttp;
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+              xmlhttp=new XMLHttpRequest();
+            }else{// code for IE6, IE5
+              xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function(){
+                if (xmlhttp.readyState==4 && xmlhttp.status==200){
+                    document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+                }
+            };
+             xmlhttp.open("GET","http://localhost:8080/sample/down?args="+str1+","+str2+","+
+            		str3+","+str4+","+str5+","+str6,true);
+            xmlhttp.send();
+            }
+        };

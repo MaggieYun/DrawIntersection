@@ -1,0 +1,28 @@
+
+
+var draw_bestpath = function(){
+	//获取起点和终点的索引
+	var start=document.getElementById("startNode").value;   
+	var end=document.getElementById("endNode").value;
+	//post交互的url地址
+	// var url = "../bestpath";
+	$("#basemap").attr("src","http://127.0.0.1:8888/bestpath?startid="+start+"&endid="+end);
+
+};	
+
+
+var redraw = function(){
+	//获取起点和终点的索引
+	var startid=document.getElementById("startNode").value="";   
+	var endid=document.getElementById("endNode").value="";
+	$("#basemap").attr("src","http://127.0.0.1:8888/road");
+
+
+};
+
+
+//JQuery监听事件格式
+// $(function(){
+// 	$("#btngetpath").bind("click",draw_bestpath);
+
+// });

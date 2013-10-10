@@ -1,0 +1,13 @@
+package net.yhte.gis.zxy.cores;
+
+/**
+ * ÏñËØÀà
+ * @author ÕÅĞ¡Ó±
+ *
+ */
+public class MapPixel {
+	public int start_x;
+	public int start_y;
+	public int end_x;
+	public int end_y;
+}

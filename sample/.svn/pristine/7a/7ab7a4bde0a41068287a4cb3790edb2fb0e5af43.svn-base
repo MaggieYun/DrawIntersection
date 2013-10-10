@@ -1,0 +1,202 @@
+var RouteEngine = function() {
+	// 找到canvas容器
+	var _canvas = document.getElementById('map');
+
+	// 获取绘图上下文
+	var _ctx = canvas.getContext('2d');
+
+	/**
+	 * 随机生成一个canvas范围内的像素坐标位置
+	 */
+	var simulateData = function() {
+		var x = Math.round(Math.random() * (_canvas.width - 10));
+		var y = Math.round(Math.random() * (_canvas.height - 10));
+		return [ x, y ];
+	};
+
+	/**
+	 * 用于存储模拟网格节点
+	 */
+	var _points = [];
+
+	/**
+	 * 创建模拟网格节点
+	 */
+	var gen_grid = function(size) {
+		for ( var i = 0; i <= size - 1; i++) {
+			var posxy = simulateData();
+			var pos = new Point(posxy[0], posxy[1]);
+
+			var x = pos.setX().getX();
+			var y = pos.setY().getY();
+			var id = pos.getId();
+			// 绘线
+			_ctx.beginPath();
+			_ctx.arc(x, y, 5, 0, Math.PI * 2, true);
+			_points.push(pos);
+			_ctx.stroke();
+
+			// 标志点名称
+			_ctx.font = '20px serif';
+			_ctx.fillStyle = '#FF0000';
+			_ctx.fillText(id, x + 5, y + 5);
+
+		}
+
+	};
+	/**
+	 * 连接points中的点
+	 */
+	var connect = function(size) {
+		for ( var i = 0; i <= size - 1; i++) {
+			for ( var j = i + 1; j <= size - 1; j++) {
+				_ctx.moveTo(points[i][0], points[i][1]);
+				_ctx.lineTo(points[j][0], points[j][1]);
+				_ctx.stroke();
+			}
+		}
+
+	};
+	/**
+	 * 寻路
+	 */
+	var route = function() {
+		Point.endPoint = new Point();
+		var startP = $("#startNode").val();// 起点
+		var endP = $("#endNode").val();// 终点
+		var inAvailablePId = $("#notPass").val().split(" ");// 不可通过点id号,以空格分
+		var openList = [];// 开启列表
+		var closeList = [];// 关闭列表
+
+		// 获取不可通达的点
+		var inAvailablePs = getForm_arr(inAvailablePId, points);
+		// 将起点添加至开启列表
+		openList.push(points[startP]);
+		// 当出现下面两种情况之一时，停止；1、将终点B添加至关闭列表。2、开启列表为空。
+		while (!openList.length == 0 && in_arr(endP, closeList)) {
+			// 遍历开启列表,寻找F值最小的格子，设置为当前格
+			var currentPoint = getMinFPoint(openList);
+			// 将当前格添加至关闭列表
+			closeList.push(currentPoint);
+			// 获得当前格的临近格子
+			var nearPs = getNeraP(currentPoint);
+			// 遍历当前格的临近格子----
+			handlerNearPs(currentPoint, nearPs, openList, closeList,
+					inAvailablePs);
+			// pushToOpenList(openList,nearP);
+		}
+		// alert(openList);
+	};
+
+	/**
+	 * 取当前点邻近的周围点
+	 */
+	var getEffectiveNearP = function(currentPoint, notPassP, closeList,
+			openList) {
+		var icurrentPoint = currentPoint;
+		var inotPassP = notPassP;
+		var icloseList = closeList;
+
+		// 获得所有临近点NearPs
+		var NearPs = getNearP(icurrentPoint);
+		// 遍历所有邻近的点NearPs
+		for ( var i = 0; i < NearPs.length; i++) {
+			// 是否关闭列表的
+			for ( var j = 0; j < icloseList.length; j++) {
+				if (equal(NearPs[i], icloseList[j])) {
+					NearPs.splic(i, 1);
+					break;
+				}
+				;
+			}
+			// 是否不可通过的
+			for ( var j = 0; j < inotPassP.length; j++) {
+				if (equal(NearPs[i], inotPassP[j])) {
+					NearPs.splic(i, 1);
+					break;
+				}
+			}
+			// 如果格子 not in 开启列表，添加该格子至开启列表。并设置当前格为该格子的父格子，并计算该格子的G值和H值以及F值。
+			/*
+			 * for(var j=0;j<=inearP.length;i++){
+			 * if(!equal(inearP[i],iopenList[j])){ }; }
+			 */
+		}
+	};
+
+	/**
+	 * 取当前点所有的邻近的周围点
+	 */
+	var getNeraP = function(currentPoint) {
+
+		return NearPs;
+	};
+
+	/**
+	 * 遍历临近点
+	 * 
+	 * @param
+	 */
+	var handlerNearPs = function(currentPoint, nearPs, openList, closeList,
+			inAvailablePs) {
+		for ( var i = 0; i < nearPs.length; i++) {
+			// 如果格子不可通过 || in 关闭列表，
+			if (!(in_arr(nearPs[i], inAvailablePs) || in_arr(nearPs[i],
+					closeList))) {
+				// 如果格子 not in 开启列表,。
+				if (!in_arr(nearPs[i], openList)) {
+					// 添加该格子至开启列表
+					openList.push(nearPs[i]);
+					// 并设置当前格为该格子的父格子
+					nearPs[i].setParent(currentPoint);
+					// 并计算该格子的G值和H值以及F值
+				}
+			}
+		}
+	};
+	/**
+	 * 如果格子 not in 开启列表，添加该格子至开启列表。并设置当前格为该格子的父格子，并计算该格子的G值和H值以及F值。
+	 */
+
+	var pushToOpenList = function(openList, nearP) {
+		var iopenList = openList;
+		var inearP = nearP;
+		for ( var i = 0; i < iopenList.length; i++) {
+			for ( var j = 0; j <= inearP.length; i++) {
+				if (!equal(inearP[i], iopenList[j])) {
+					// 添加该格子至开启列表
+					iopenList.push(inearP[i]);
+
+				}
+				;
+			}
+		}
+
+	};
+	/**
+	 * 计算F值最小点
+	 */
+	var getMinFPoint = function(openList) {
+		// 开启列表只有起点时
+		if (openList.length == 1) {
+			var minFPoint = openList[0];// 设第一个点为F值最小点
+			var minF = getF(openList[0]);// 设第一个点的F值为最小F值
+		} else {
+			// 顺序比较获得最小值
+			for ( var i = 0; i < openList.length; i++) {
+				var tempF = openList[i].getF;
+				minFPoint = MinF < tempF ? minFPoint : openList[i];
+				minF = MinF < tempF ? MinF : tempF;
+			}
+		}
+		return minFPoint;
+	};
+
+	/**
+	 * 刷新
+	 */
+	var refesh = function() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		points = [];
+	};
+};

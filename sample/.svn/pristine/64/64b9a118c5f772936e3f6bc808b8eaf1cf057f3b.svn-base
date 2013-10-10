@@ -1,0 +1,174 @@
+package net.yhte.gis.xzyun.tilesystem;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Scanner;
+
+import net.yhte.gis.xzyun.package1.CreateFileUtil;
+
+public class TileSystem {
+	// private static double EarthRadius=6378137;
+	private static double MinLatitude = -85.051128;
+	private static double MaxLatitude = 85.05112878;
+	private static double MinLongitude = -180;
+	private static double MaxLongitude = 180;
+
+	private static double Clip(double n, double minValue, double maxValue) {
+		return Math.min(Math.max(n, minValue), maxValue);
+	}
+
+	public static int MapSize(int levelOfDetail) {
+		return 256 << levelOfDetail;
+	}
+
+//    public static double GroundResolution(double latitude,
+//    										int levelOfDetail){
+//    	//确保纬度在限定范围内
+//    	latitude=Clip(latitude,MinLatitude,MaxLatitude);
+//    	return Math.cos(latitude*Math.PI/180)*2*
+//    					Math.PI*EarthRadius/MapSize(levelOfDetail);
+//    }
+    
+//    public static double MapScale(double latitude,int levelOfDetail,
+//    								int screenDpi){
+//    	return GroundResolution(latitude,levelOfDetail)*screenDpi/0.0254;
+//    	
+//    }
+    
+	/**
+	 * 
+	 * @param latitude
+	 * @param longitude
+	 * @param levelOfDetail
+	 * @return
+	 */
+	public static Pixel LatLongToPixelXY(double latitude, double longitude,
+			int levelOfDetail) {
+		latitude = Clip(latitude, MinLatitude, MaxLatitude);
+		longitude = Clip(longitude, MinLongitude, MaxLongitude);
+
+		double x = (longitude + 180) / 360;
+		double sinLatitude = Math.sin(latitude * Math.PI / 180);
+		double y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude))
+				/ (4 * Math.PI);
+
+		int mapSize = MapSize(levelOfDetail);
+		int pixelX = (int) Clip(x * mapSize + 0.5, 0, mapSize - 1);
+		int pixelY = (int) Clip(y * mapSize + 0.5, 0, mapSize - 1);
+		
+		
+//		int[] pixel = new int[2];
+//		pixel[0] = pixelX;
+//		pixel[1] = pixelY;
+//		return pixel;
+		
+		Pixel pixel = new Pixel();
+		pixel.x = pixelX;
+		pixel.y = pixelY;
+		return pixel;
+	}
+
+	/**
+	 * 
+	 * @param pixelX xiangsuzhi
+	 * @param pixelY 
+	 * @return 
+	 */
+	public static int[] PixelXYToTileXY(int pixelX, int pixelY) {
+		int tileX = pixelX / 256;
+		int tileY = pixelY / 256;
+		
+		int[] tile = new int[2];
+		tile[0] = tileX;
+		tile[1] = tileY;
+		System.out.print(tile[0]+"\n");
+		System.out.print(tile[1]+"\n");
+		return tile;
+	
+
+	}
+
+	public static void PixelXYToLatLong(int pixelX, int pixelY,
+			int levelOfDetail, double latitude, double longitude) {
+		double mapSize = MapSize(levelOfDetail);
+		double x = (Clip(pixelX, 0, mapSize - 1) / mapSize) - 0.5;
+		double y = 0.5 - (Clip(pixelY, 0, mapSize - 1) / mapSize);
+
+		latitude = 90 - 360 * Math.atan(Math.exp(-y * 2 * Math.PI)) / Math.PI;
+		longitude = 360 * x;
+	}
+
+	public static void TileXYToPixelXY(int tileX, int tileY, int pixelX,
+			int pixelY) {
+		pixelX = tileX * 256;
+		pixelY = tileY * 256;
+	}
+
+	public static String TileXYToQuadKey(int tileX, int tileY, int levelOfDetail) {
+		StringBuilder quadKey = new StringBuilder();
+		for (int i = levelOfDetail; i > 0; i--) {
+			char digit = '0';
+			int mask = 1 << (i - 1);
+			if ((tileX & mask) != 0) {
+				digit++;
+			}
+			if ((tileY & mask) != 0) {
+				digit++;
+				digit++;
+			}
+			quadKey.append(digit);
+		}
+		return quadKey.toString();
+	}
+    
+	public static void main(String[] args) throws IOException {
+		System.out.println("请输入左上角点和右下角点的经纬度值：");
+		Scanner scanner = new Scanner(System.in);
+		double latitude1 = scanner.nextInt();
+		double longitude1 = scanner.nextInt();
+		double latitude2 = scanner.nextInt();
+		double longitude2 = scanner.nextInt();
+		System.out.println("请输入等级范围：");
+		int levelOfDetail = scanner.nextInt();
+		long picNum; // 要下载的图片数量
+
+		Pixel pixel1 = TileSystem.LatLongToPixelXY(latitude1, longitude1, levelOfDetail);
+		int[] tile1 = TileSystem.PixelXYToTileXY(pixel1.x, pixel1.y);
+		
+		Pixel pixel2=TileSystem.LatLongToPixelXY(latitude2, longitude2, levelOfDetail);
+		int[] tile2=TileSystem.PixelXYToTileXY(pixel2.x,pixel2.y);
+		
+		picNum = (tile2[0] - tile1[0]+1)*(tile1[1]-tile2[1]+1);
+		System.out.println("要下载的图片数量为：" + picNum);
+		
+		for (int i = tile1[0]; i <= tile2[0]; i++){
+			String dirName = "c:/" + "L" + levelOfDetail + "/" + "x" + i+ "";
+			CreateFileUtil.createDir(dirName);
+			
+			for (int j = tile2[1]; j <= tile1[1]; j++){
+				String base = "http://emap0.mapabc.com/mapabc/maptile?v=w2.61&x="
+						+ i + "&y=" + j + "&z=" + levelOfDetail + "&s=";
+				System.out.println(base);
+				
+			    
+			    String fileName = dirName + "/"+"y"+j+".png";
+			    
+			    URL url = new URL(base);
+			    InputStream remoteStream = url.openStream();
+			    byte[] bytes = new byte[remoteStream.available()];
+			    remoteStream.read(bytes);
+			    File file = new File(fileName);
+			    FileOutputStream outStream = new FileOutputStream(file);
+			    outStream.write(bytes);
+			    outStream.close();
+			    
+			    
+			}
+		}	
+	}
+
+}
+

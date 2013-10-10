@@ -1,0 +1,36 @@
+//找到canvas容器
+var canvas = document.getElementById('map');
+//获取绘图上下文
+var ctx = canvas.getContext('2d');
+
+
+//绘制线路
+var draw_route = function(){
+
+	//post交互的url地址
+	var url = "../hello";
+	var param = {};
+
+	$.post(url,param,function(data){
+			console.log("get path,start draw path");
+			console.log(data);
+			var ptcord=data.split(":")
+			console.log(ptcord[0]);
+			// ctx.beginPath();
+			// ctx.arc(10,10,5,0,Math.PI*2,true);
+			// ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(220,497,5,0,Math.PI*2,true);
+			ctx.stroke();
+
+			var n = ptcord.length;
+			console.log(n);
+			for(i=0;i<n;i++){
+				ctx.beginPath();
+				ctx.arc(ptcord[i][0],ptcord[i][1],5,0,Math.PI*2,true); 
+				ctx.stroke();
+			};
+	});
+
+};

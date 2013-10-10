@@ -1,0 +1,47 @@
+	body { 
+    	margin: 0px; 
+    	overflow:hidden; 
+    }
+    
+    #OCXMsg {
+    	position: absolute;left: 0px;top: 40px;
+		width:100%;
+		text-align:center;
+		border-style:solid;border-width:thin;border-color:'#FF0000';
+		background-color:'#f4eb8b';
+		visibility:hidden;overflow: visible;
+    }
+    
+    #videoPanel {
+    	position: absolute;
+		border-style:solid;border-width:thin;border-color:'#FFFFFF';
+		background-color:'#000000';filter:Alpha(opacity=60);
+		overflow: visible;visibility:hidden;
+    }
+    
+    #bar {
+    	margin: 0 0 0 14;cursor:move;top:0;width:795;text-align: right;
+    }
+    
+    img {
+    	cursor: pointer;
+    }
+    
+    #ocx {
+    	margin: 0 10 10 10;border-style:solid;border-width:thin;border-color:'#FFFFFF';visibility: visible;
+    }
+	
+	#sncPanel {
+    	position: absolute;
+		border-style:solid;border-width:thin;border-color:'#FFFFFF';
+		background-color:'#145292';
+		overflow: visible;visibility:hidden;
+    }
+	
+	#sncBar {
+    	margin: 0 0 0 14;cursor:move;top:0;width:795;text-align: right;
+    }
+	
+	#sncPanelIframe {
+    	margin: 0 10 10 10;border-style:solid;border-width:thin;border-color:'#FFFFFF';visibility: visible;
+    }

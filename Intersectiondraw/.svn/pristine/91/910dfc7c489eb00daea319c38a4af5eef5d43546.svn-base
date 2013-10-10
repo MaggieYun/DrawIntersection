@@ -1,0 +1,31 @@
+$.fn.tag = function(url,params){
+    $(this).attr("src",url+"?params="+ JSON.stringify(params));
+
+    this.refesh = function(parameters){
+        $(this).attr("src",url+"?params="+ JSON.stringify(parameters));
+    };
+};
+
+
+$(function(){
+
+    var params = {            
+        "inter_id":1,
+        "intersection":{
+            "0":[1,4,1],
+            "2":[10,14,15],
+            "3":[1,2,4]
+        },
+        "image_size":[800,800]               
+    }
+
+    $('#basemap').tag('http://127.0.0.1:8888/intersectionDraw',params);
+
+});
+
+
+
+
+
+
+

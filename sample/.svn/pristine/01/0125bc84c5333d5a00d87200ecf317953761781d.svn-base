@@ -1,0 +1,127 @@
+
+	
+def find_best_path(start,end):
+	openlist=[]
+	closelist=[]
+	nowpoint=none
+	openlist.push(start)
+	flag=true
+	while flag:
+		nowpoint=get_nowpoint(end)
+		closelist=add_closelist(nowpoint)
+		nowpoint.get_neighborpoint
+
+		for x in range(nowpoint.neighborpoint):
+			if (x in closelist):
+				continue
+			if(!(x in openlist)):
+				openlist=add_openlist(x)
+				x.set_parent(nowpoint)
+				x.get_g
+				x.get_h
+				x.get_f
+			else:
+				for i in range(lines):
+					if((nowpoint.id=i[0] && x.id=i[1])||(nowpoint.id=i[1] && x.id=i[0])):
+						temp_g=i[3]
+				if((nowpoint.g+temp_g)<x.g):
+					x.set_parent(nowpoint)
+					x.get_g()
+					x.get_f()
+
+		if((end in closelist)||(len(openlist)=0):
+			flag=false	
+			
+	
+		
+#找出开启列表中f值最小的节点，作为当前节点
+def get_nowpoint(end):
+	minlen=100000
+	nowpoint=None
+	for x in range(openlist):
+		x.get_g()
+		x.get_h(end)
+		x.get_f()
+		if(x.f<minlen):
+			minlen=x.f
+			nowpoint=x				
+	return nowpoint
+
+def add_openlist(p):    
+	openList.push(p)
+	return closelist	
+
+def delete_openlist(p):
+    openlist.remove(p)
+    return openlist
+
+def add_closelist(p):
+	closelist.push(p)
+	return closelist
+
+
+#点类		
+class Point:
+	def __init__(self, nowpoint = None, g = 0, h = 0,id=0):
+		self.parent = nowpoint
+    	self.g = g
+		self.h = h
+		self.id = 0    #点号,可否这样赋值？付给它的是一个点对象？还是点对象的点号属性
+		self.neighborpoint=[] 
+
+	def set_id(self,pid):
+		self.id = pid
+
+	def set_parent(self,nowpoint):   #   设置父节点
+		self.parent=nowpoint
+
+	def get_g(self):               #   重新计算该节点的g,h,f值
+		for x in range(lines):
+			if((self.id=x[0] && self.parent.id=x[1]) || (self.id=x[1] && self.parent.id=x[0])):
+				length=x[3]
+		self.g=self.parent.g+length
+
+	def get_h(self,end):
+		for x in range(lines):
+			if((self.id=x[0] && end.id=x[1]) || (self.id=x[1] && end.id=x[0])):
+				length=x[3]
+		self.h=length
+
+	def get_f(self):
+		self.f=self.g+self.h	
+
+	def get_neighborpoint(self):      #     返回的都是可通过的"节点id编号"对象（未设置单向，双向）    
+		for x in range(lines):  
+			if(x[2]=true):
+				if(self.id=x[0]):
+					for y in pointsclass:
+						if y.id=x[1]
+						self.neighborpoint.push(y)
+				elif(self.id=x[1]):
+					for y in pointsclass:
+						if y.id=x[0]
+						self.neighborpoint.push(y)		
+
+
+if __name__ == '__main__':
+	lines=[[1, 2, true, 357], [1, 3, true, 193], [1, 4, false, 334], [1, 5, false, 397], [1, 6, true, 104], [2, 3, true, 367], [2, 4, true, 195], [2, 5, true, 82], [2, 6, true, 320], [3, 4, true, 239], [3, 5, true, 366], [3, 6, false, 97], [4, 5, false, 151], [4, 6, true, 247], [5, 6, false, 340]]
+	points=[1,2,3,4,5,6]
+	#s=[a,b,c,d,e,f]
+	s="a,b,c,d,e,f"
+	ss=s.split(",")
+	num=len(points)
+	pointsclass=[]  #  存放点类对象（数组内存放类对象）
+	result=[]
+	start=Point()
+	end=Point()
+
+	for x in range(1,num+1):
+		pid=x
+		pname=ss[x-1]
+		pname=Point()
+		pname.set_id(pid)
+		pointsclass.push(pname)
+
+	result=find_best_path(e,b)	
+	print result
+

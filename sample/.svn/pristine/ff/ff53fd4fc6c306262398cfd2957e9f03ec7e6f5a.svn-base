@@ -1,0 +1,57 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+
+/**
+ * @author 许照云
+ *
+ */
+public class DownLoadFile{
+	
+
+	/**
+	 * @param base 文件的URL地址
+	 * @param fileName  要写入文件的本地文件路径
+	 * @throws IOException
+	 */
+	public static void download(String base, String fileName) throws IOException {
+		// 读文件
+		URL url = new URL(base);
+		/**这段代码下载会出现图片下载不完整的问题
+		InputStream remoteStream = url.openStream();
+		byte[] bytes = new byte[remoteStream.available()];
+		if ((bytes.length) != -1) {
+			remoteStream.read(bytes);
+		}
+		File file = new File(fileName);
+		 写文件
+		FileOutputStream outStream = new FileOutputStream(file);
+		BufferedOutputStream buff = new BufferedOutputStream(outStream);
+		buff.write(bytes);
+		buff.flush();
+		buff.close();
+		*/
+	try {
+		//用下面的代码感觉下载速度变慢很多（未验证下载速度）
+		BufferedInputStream inputStream =
+				new BufferedInputStream(url.openStream()); 
+		BufferedOutputStream outputStream =
+				new BufferedOutputStream(
+						new FileOutputStream(fileName)); 
+		int read = 0;
+		while((read = inputStream.read()) != -1) {//此处应是判断图片是否写完
+				outputStream.write(read);
+			} 
+		inputStream.close();
+		outputStream.flush();
+		outputStream.close(); 
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+		
+	}
+}

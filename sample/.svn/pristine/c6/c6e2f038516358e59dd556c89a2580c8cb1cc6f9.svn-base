@@ -1,0 +1,21 @@
+<meta charSet="utf-8">
+<style>
+#map{
+	border:solid #cccccc 1px;
+}
+</style>
+<script type="text/javascript" src="resources/javascript/jquery.js"></script>
+<body>
+	<div class="map" onmousedown="mouseDown(event)" onmousemove="mouseMove(event)" onmouseup="mouseUp(event)">
+		<img id="basemap" src="http://127.0.0.1:8888/road" alt="地图底图" >
+		<!-- <canvas id="map" width="955" height="600"></canvas> -->
+	</div>
+	
+	<br/>
+	<!-- <input type="button" value="生成路径" onclick="draw_route();"></input> -->
+	起点:<input type="text" id="startNode" ></input>
+	终点:<input type="text" id="endNode"></input>
+	<input type="button" id="btngetpath" value="寻找最短路径" onclick="draw_bestpath()"></input>
+	<input type="button" id="btnrefresh" value="刷新" onclick="redraw();"></input>
+</body>
+<script type="text/javascript" src="resources/javascript/route.js"></script>

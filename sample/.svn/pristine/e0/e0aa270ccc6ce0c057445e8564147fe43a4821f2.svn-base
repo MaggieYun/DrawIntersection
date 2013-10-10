@@ -1,0 +1,34 @@
+package net.yhte.gis.xzyun.api;
+/**
+ * @author 许照云
+ *
+ */
+public class GetParameters{
+/**
+	 * 获取地理坐标（获取的是“经纬度”）
+	 * 
+	 * @param args 输入字符串数组
+	 * @return 返回用户输入的地理坐标范围
+	 */
+	public static double[] getgeocord(String[] args) {
+		double[] geocord = new double[4];
+		geocord[1] = Double.parseDouble(args[2]);//如果要输入“纬经度”，则调换geocord[]0和1,2和3的位置
+		geocord[0] = Double.parseDouble(args[3]);
+		geocord[3] = Double.parseDouble(args[4]);
+		geocord[2] = Double.parseDouble(args[5]);
+		return geocord;
+	}
+	
+	/**
+	 * 获取等级范围
+	 * 
+	 * @param args 输入字符串数组
+	 * @return 返回用户输入的等级范围
+	 */
+	public static int[] getlv(String[] args) {
+		int[] lv = new int[2];
+		lv[0] = Integer.parseInt(args[0]);
+		lv[1] = Integer.parseInt(args[1]);
+		return lv;
+	}
+}

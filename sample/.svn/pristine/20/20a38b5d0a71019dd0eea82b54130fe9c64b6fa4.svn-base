@@ -1,0 +1,103 @@
+<html>
+    <head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<style type="text/css">
+    		input [type="text"]{
+    			width: 100px; 
+    			height: 50px;
+    			margin:0;
+         		padding:0;
+    		}
+         	.frame{
+         		width:500px;
+         		height:400px;
+         		margin:0;
+         		padding:0;
+         		
+         	}
+         	.frame>p{
+         		width:500px;
+         		height:50px;
+         		margin:0;
+         		padding:0;
+         		float: left;
+         	}
+         	p>div{
+         		width:50px;
+         		height:50px;
+         		float: left;
+         		margin:0;
+         		padding:0;
+         	}
+
+    	</style>
+    	<script type="text/javascript" src="jquery.js"></script>
+    	<script type="text/javascript">
+	    	$(document).ready(function(){
+	            $("<div></div>").appendTo($("body")).addClass("frame"); 
+	    		$("#bt2").click(function(mse1){
+	    			var mes1=$("#mes1").val();
+	    			var mes2=$("#mes2").val();
+	    			var color1=$("#color1").val();
+	    			var color2=$("#color2").val();
+	            	addMessage(mes1,"p1",color1);
+	            	addMessage(mes2,"p2",color2);
+	            });
+
+                 
+                 $("#bt3").click(function(){
+                 	$(".p1").addClass("on");
+                 	$("p").hide();
+	           		var t=setInterval(showMessage,1000);
+	            });
+
+                  /*$("#bt4").click(function(){
+	           		clearInterval(t);
+	            });
+*/
+                function addMessage(message,index,color){
+                	var arr=message.split("");
+                	var num=500/message.length;
+                    $("<p></p>").appendTo($(".frame")).css({"height":num+"px","font-size": num+"px"}).addClass(index); 	
+                	for(var i=0;i<=arr.length;i++){
+                		$("<div/>").html(arr[i])
+                			.width(num).height(num)
+							.appendTo($("."+index))
+							.css({"color":color});                	}
+                };
+
+                 function showMessage(){
+	            	$(".on").show();
+	            	$(".on").siblings().hide();
+                	$("p:first").toggleClass("on");
+                	$("p:last").toggleClass("on"); 
+	            };
+                    //border:solid 1px red;
+	    	});        
+    	</script>
+    </head>
+	<body>
+		<div>
+			消息1：
+		    <input type="text" id="mes1" >
+		    <select name="color" id="color1">
+				<option value="red" selected="selected">红色</option>
+				<option value="green">绿色</option>
+				<option value="yellow">黄色</option>
+			</select>
+		    <br>
+		    消息2：
+		    <input type="text" id="mes2" >
+		    <select name="color" id="color2">
+				<option value="red" selected="selected">红色</option>
+				<option value="green">绿色</option>
+				<option value="yellow">黄色</option>
+			</select>
+		    <br>
+		    <button type="button" id="bt2">传入数据</button>
+		    <button type="button" id="bt3">切换显示</button>
+			<button tyoe="button" id="bt4">停止</button>
+	    </div>
+	</body>
+
+</html>

@@ -1,0 +1,26 @@
+package net.yhte.gis.zxy.cores;
+
+/**
+ * 像素类
+ * 
+ * @author 张小颖
+ * 
+ */
+public class MapPixel {
+	/**
+	 * 坐标1像素x坐标
+	 */
+	public int start_x;
+	/**
+	 * 坐标1像素y坐标
+	 */
+	public int start_y;
+	/**
+	 * 坐标2像素x坐标
+	 */
+	public int end_x;
+	/**
+	 * 坐标2像素y坐标
+	 */
+	public int end_y;
+}

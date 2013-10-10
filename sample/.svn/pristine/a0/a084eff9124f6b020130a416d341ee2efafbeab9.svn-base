@@ -1,0 +1,45 @@
+<html>
+<head>
+<link type="text/css" href="core.css" rel="stylesheet" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="core.js"></script>
+</head>
+<body>
+	<div>
+		<form action="">
+			消息： <input type="text" id="mes1"> 停顿时长： <input type="text" id="interval">
+			<select name="color"
+				id="fontcolor">
+				<option value="red" selected="selected">红色</option>
+				<option value="green">绿色</option>
+				<option value="yellow">黄色</option>
+			</select> <br> 字体大小：<input type="text" id="fontsize"> <br>
+			字体样式： <select name="fontstyle" id="fontstyle" onchange="onChangeHandler1();">
+				<option value="normal" selected="selected">正常</option>
+				<option value="italic">斜体</option>
+				<option value="oblique">倾斜</option>
+			</select> <br>
+			字体粗细： <select name="fontweight" id="fontweight" onchange="onChangeHandler2();">
+				<option value="100">100</option>
+				<option value="200">200</option>
+				<option value="300">300</option>
+				<option value="normal" selected="selected">普通</option>
+				<option value="500">500</option>
+				<option value="600">600</option>
+				<option value="bold">加粗</option>
+				<option value="800">800</option>
+				<option value="900">900</option>
+			</select> <br>
+			对齐方式：
+         <select name="align" id="align">
+			<option value="center" selected="selected">居中</option>
+			<option value="left">左对齐</option>
+			<option value="right">右对齐</option>
+		</select> <br>
+			<button type="button" id="bt1">click</button>
+		</form>
+	</div>
+</body>
+
+</html>

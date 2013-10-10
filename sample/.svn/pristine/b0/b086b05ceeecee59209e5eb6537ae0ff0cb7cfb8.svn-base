@@ -1,0 +1,70 @@
+#coding=utf-8
+import urllib
+import json
+import tornado.ioloop
+import tornado.web
+
+class convert:
+	@classmethod   
+	def get_roads(cls,roadurl):
+		"""
+		获取存在url地址上的道路数据，js形式转化为python可以
+		处理的数组形式（字典组成的数组）
+		"""
+		js=urllib.urlopen(roadurl).read()
+		js=js.replace("var roads =","")
+		js=js.replace(";","")
+		roads=json.loads(js)
+		# print roads[0]["G"]["polyline"][0]
+		return roads
+
+	@classmethod   
+	def gemtry_to_screen(cls,roads):
+		"""
+		首先将点位的地理坐标从roads字典数组中取出
+		将地理坐标转化为屏幕坐标
+		"""		
+		xmin=13426192.883026948   #地理坐标基本数据
+		ymin=3671416.5248470777
+		xmax=13430755.218152719
+		ymax=3674282.9134077714 
+		gh=ymax - ymin           
+		gw=xmax - xmin
+		scaley=955/gh             #求比例尺
+		scalex=550/gw
+
+		ptgms=[]                  #从roads取出点位地理坐标   
+		for x in roads:           #如何利用map(),lambda()等函数快捷的处理roads数组？？？
+			ptgms.append(map(None,x["G"]["polyline"][0]))
+		print ptgms
+		ptscreen=[]               #存放点位屏幕坐标
+		y=[0,0]
+		for x in ptgms:           #求取屏幕坐标
+			y[0]=scalex*(x[0]-xmin)
+			y[1]=scaley*(x[1]-ymin)
+			ptscreen.append(y)	
+		return ptscreen	
+
+
+
+class MainHandler(tornado.web.RequestHandler):
+	def get(self):
+		roadurl="http://172.16.60.32/route/road.js"
+		roads=convert.get_roads(roadurl)    #调用类的方法，不用实例化（convert()），即静态类
+		ptscreen=convert.gemtry_to_screen(roads)
+
+		self.write(str(ptscreen))
+
+		# self.write(":".join(map(lambda point:str(point),ptscreen)))
+		# self.write(json.dumps(lines[0]))
+	post = get
+
+application = tornado.web.Application([
+	(r"/hello", MainHandler),
+	(r"/static/(.*)", tornado.web.StaticFileHandler, {"path": r"g:/second"}),
+])	
+
+
+if __name__ == '__main__':
+	application.listen(8888)
+	tornado.ioloop.IOLoop.instance().start()

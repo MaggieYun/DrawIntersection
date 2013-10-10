@@ -1,0 +1,16 @@
+package net.yhte.gis.zxy.cores;
+/**
+ * ÍßÆ¬×ø±ê
+ * @author ÕÅĞ¡Ó±
+ *
+ */
+public class MapTile {
+	/**
+	 * 
+	 */
+	public int start_x;
+	public int start_y;
+	public int end_x;
+	public int end_y;
+
+}

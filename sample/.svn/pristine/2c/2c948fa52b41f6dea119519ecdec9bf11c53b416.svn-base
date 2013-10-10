@@ -1,0 +1,62 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.IOException;
+
+/**
+ * @author Administrator
+ *
+ */
+public class TestSet {
+
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		//File file = new File("c:/settings.txt");
+		//Settings settings=new Settings();
+		//settings.get(file);
+		/**
+		BufferedReader buffer = new BufferedReader(new FileReader("c:/settings.txt"));
+        StringBuilder lines = new StringBuilder();
+        String line;
+        while( (line = buffer.readLine()) != null){
+            lines.append(line);
+        }
+        String configuration=lines.toString();
+        System.out.println(configuration); 
+        String[] par=configuration.split(",");
+	    System.out.println("地理范围："+par[0]); 
+	    String[] geocoord=par[0].split(":");
+	    System.out.println("第一个地理坐标："+geocoord[0]); 
+	    String[] level=par[1].split(":");
+	    System.out.println("第一个等级："+level[0]);
+	    System.out.println("google URL:"+par[2]);
+	    String[] address=par[2].split(":");
+	    System.out.println("google URL前缀:"+address[0]);
+	    System.out.println("mapabc URL:"+par[3]);
+	    System.out.println("baidu URL:"+par[4]);
+	    System.out.println("下载目录："+par[5]);
+	    System.out.println("线程数："+par[6]);
+	    */
+		
+		Settings settings=new Settings("c:/settings.txt");
+		String[] arguments1=settings.get("geocoord");
+		System.out.println(arguments1[0]);
+		System.out.println(arguments1[1]);
+		System.out.println(arguments1[2]);
+		System.out.println(arguments1[3]);
+		String[] arguments2=settings.get("level");
+		System.out.println(arguments2[0]);
+		System.out.println(arguments2[1]);
+		settings.get("mapkind");
+		settings.get("dir");
+		settings.get("thread");
+		
+		
+	
+
+	}
+
+}

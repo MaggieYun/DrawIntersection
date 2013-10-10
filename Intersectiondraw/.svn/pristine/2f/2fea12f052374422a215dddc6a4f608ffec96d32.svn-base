@@ -1,0 +1,3 @@
+$(function(){
+	$("#basemap").attr("src","../intersectionDraw?setting="+settingStr);
+});

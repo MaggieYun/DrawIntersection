@@ -1,0 +1,14 @@
+{	
+	"root_address":"C:\\intersections\\pics", 
+	"pic_address":{
+		"1":"0001w.gif",
+		"2":"0010w.gif",
+		"4":"0100w.gif",
+		"5":"0110w.gif",
+		"8":"1000w.gif",
+		"9":"1001w.gif",
+		"10":"1010w.gif",
+		"14":"1110w.gif",
+		"15":"1111w.gif"
+}
+}

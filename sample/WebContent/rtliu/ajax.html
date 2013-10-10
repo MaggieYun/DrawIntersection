@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Ajax</title>
+		<meta charset="utf-8" />
+		<script type="text/javascript" src="javascript/jquery-1.8.0.min.js"></script>
+		
+	</head>
+	<body>
+		<p id="msg" style="color:red">点击下面按钮,更新这里的内容</p>
+		<input id="btnUpdate" type="button" value="同步" onclick="init(false);"></input>
+		<input id="btnUpdate" type="button" value="异步" onclick="init(true);"></input>
+	</body>
+	<script type="text/javascript">
+		var init = function(bool){
+
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET","data.html",bool);
+			xhr.onreadystatechange = function(){
+				console.log("state change:",xhr.readyState,xhr.status);
+				if(xhr.readyState==4 && xhr.status==200){
+					console.log("成功");
+					//document.getElementById("msg").innerText = xhr.responseText;
+				}
+			};
+			xhr.send();
+			console.log("asdfasd");
+		};
+	</script>
+</html>

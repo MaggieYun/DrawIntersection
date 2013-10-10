@@ -1,0 +1,22 @@
+{
+	"inter_id":1,
+	"lane_width":40,
+	"rootAddress":"C:\\intersections\\pics", 
+	"picAddress":{
+		"1":"0001w.gif",
+		"2":"0010w.gif",
+		"4":"0100w.gif",
+		"5":"0110w.gif",
+		"8":"1000w.gif",
+		"9":"1001w.gif",
+		"10":"1010w.gif",
+		"14":"1110w.gif",
+		"15":"1111w.gif"
+	},
+	"intersection":{
+		"0":[1,4,1],
+		"2":[10,14,15],
+		"3":[1,2,4]
+	},
+	"image_size":[1000,1000]
+}

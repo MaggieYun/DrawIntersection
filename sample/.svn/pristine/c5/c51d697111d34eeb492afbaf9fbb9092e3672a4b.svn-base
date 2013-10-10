@@ -1,0 +1,40 @@
+package net.yhte.gis.zxy.cores;
+
+import java.net.URL;
+import java.io.*;
+/**
+ * @author 张小颖
+ * 定义远程下载文件的方法
+ */
+public class DlPicture {
+	/**
+	 * @throws Exception
+	 */
+	//定义远程文件地址
+	public static void download() throws Exception{
+		
+		 String remote = "http://emap0.mapabc.com/mapabc/maptile?v=w2.61&x=1&y=1&z=1&s=";
+		    //定义下载后文件地址
+		    String local = "c:/abc.png";
+		    
+		    URL url = new URL(remote);
+		    
+		    //从URL中读取流
+		    InputStream remoteStream = url.openStream();
+		    
+		    //定义字节数组
+		    byte[] bytes = new byte[remoteStream.available()];
+		    
+		    //从流中读取字节数组
+		    remoteStream.read(bytes);
+		    
+		    //创建本地文件
+		    File file = new File(local);
+		    //创建输出流
+		    FileOutputStream outStream = new FileOutputStream(file);
+		    //写入字节数组
+		    outStream.write(bytes);
+		    //关闭流
+		    outStream.close();
+		}
+}

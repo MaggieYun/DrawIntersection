@@ -1,0 +1,161 @@
+#coding=UTF-8
+from net.yhte.gis.intersection.Line import Line
+from net.yhte.gis.intersection.Canvas import Canvas
+from net.yhte.gis.intersection.Point import Point
+import Image,ImageDraw
+import math
+
+class Lane:
+	'''
+	车道类
+	'''
+	def __init__(self,lid):
+		self.id = lid
+		self.direction = None
+		self.status=None
+		self.bbox=None          #求出每个lane的范围（以便之后放置箭头和文字，设置颜色）
+
+	def set_direction(self,direction):
+		self.direction = direction
+
+	def get_bbox(self,canvas_size):
+		'''
+		暂定，还需将靠近图片中心的点偏移一定距离
+		'''
+		if self.id==1:
+			left=self.direction.line.get_boundp(canvas_size)
+		else:	
+			left=self.direction.line.get_pal_boundp(self.id-1)
+
+		right=self.direction.line.get_pal_boundp(self.id)
+		self.bbox=(left[0],left[1],right[0],right[1])
+
+
+class Direction:
+	'''
+	路口方向类（即路口的每个走向）
+	'''
+	def __init__(self,coord,did):
+		self.id=did
+		self.point = Point(coord[0],coord[1])
+		self.lanes = []
+		self.line=None
+		self.linep=None  #靠近中心空白去的两个定点
+		# self.leftpal_boundp=None
+
+	def add_lane(self,lane):
+		lane.set_direction(self)
+		self.lanes.append(lane)
+
+	def set_intersetion(self,intersection):
+		self.intersection = intersection	
+
+	def get_line(self,n):	
+		'''
+		@n：车道数
+		'''
+		self.line=Line(self.intersection.center,self.point)	
+		self.line.get_k()
+		self.line.get_b()
+		self.line.get_boundp(size)
+		self.line.get_leftpal_boundp(n)
+		self.angle=self.line.get_angle()		
+
+
+class Intersection:
+	'''
+	路口对象
+	'''
+	def __init__(self,uid,center):
+		self.id = uid
+		self.center = Point(center[0],center[1])   #(0,0)
+		self.directions = []
+		self.centerArea=None
+
+	def add_direction(self,direction):
+		direction.set_intersetion(self)   #此处不确定是否可以直接用self代表intersection？？
+		self.directions.append(direction)
+
+	def get_centerArea(self):
+		'''
+		centerArea为一维数组，每个元素是元组(x,y),是中心区域多边形的各个顶点
+		两两相连，因此涉及排序问题
+		'''
+		linelist = []
+		for direction in self.directions:
+			n = len(direction.lanes)
+			linep0 = self.center.move(direction.angle,56)
+			linep1 = linep0.move(direction.angle+math.pi/2,n*10)
+			linep2 = linep0.move(direction.angle-math.pi/2,n*10)
+			direction.linep = ((linep1.x,linep1.y),(linep2.x,linep2.y))
+			# print "angle=",direction.angle
+
+		n = len(self.directions)
+		for i in xrange(n-1):
+			for j in xrange(i+1,n):
+				if self.directions[i].angle>self.directions[j].angle:
+					temp = self.directions[i]
+					self.directions[i] = self.directions[j]
+					self.directions[j] = temp
+			
+		for ele in self.directions:
+			print ele.angle,ele.linep
+			linelist.append(ele.linep[1])
+			linelist.append(ele.linep[0])
+
+		self.centerArea = linelist
+		return	
+
+	def parse(self,data):
+		'''
+		原始数据抽象与转化
+		'''
+		data=data
+		canvas_size=data["canvas_size"]
+		directs=data["coordlist"]
+		did=0
+		for direct in directs:
+			did=did+1
+			direction=Direction(direct[0],did)
+			self.add_direction(direction)
+			direction.get_line(direct[1])
+			# print "angle=",direction.angle
+			for i in range(direct[1]):
+				lane=Lane(i+1)
+				direction.add_lane(lane)
+				lane.get_bbox(canvas_size)
+		self.get_centerArea()		
+			
+			
+
+if __name__ == '__main__':
+	size=(400,400)
+	im=Image.new("RGBA",size,"#f4f3ef")   #初始化一张图片，大小为整个路口的size
+	draw = ImageDraw.Draw(im)
+	canvas=Canvas(draw)
+
+	data={"inter_id":1,
+		"centercoord":(200,200),
+		"coordlist":[[(0,0),4],[(400,200),3],[(200,400),3]],
+		"center_radius":56,
+		"canvas_size":(400,400)}
+
+	intersection=Intersection(data["inter_id"],data["centercoord"])
+	intersection.parse(data)
+
+	for direction in intersection.directions:
+		print "k=",direction.line.k
+		canvas.drawline(direction.line,"red",4)   #绘制每个方向中心双黄线
+		canvas.draw_left_line(direction.line,"black")  #绘制每个方向左路肩
+
+		n=len(direction.lanes)
+		print "n=",n
+		for i in range(1,n+1):
+			print "i=",i
+			direction.line.get_pal_boundp(i)  #有待改进为面向对象
+			canvas.draw_palline(direction.line,"black")    #绘制平行线 即车道
+
+	print "linelist",intersection.centerArea
+	canvas.draw_center_area(intersection.centerArea,"#f4f3ef","black")	 #绘制中心空白区		
+
+	im.save(r"c:\result.png","png")	

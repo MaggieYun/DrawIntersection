@@ -1,0 +1,87 @@
+<html>
+<head>
+<link rel="Shortcut Icon" href="resources/images/favicon.ico">
+<link rel="stylesheet" type="text/css" href="resources/css/login.css">
+<title>dmc用户登录</title>
+
+</head>
+<body>
+	<div class="container">
+		<div class="header">
+			<div class="logo">
+				<a href="http://www.w3school.com.cn/"> <img alt="dmc地图下载器"
+					src="resources/images/1.jpg">
+				</a>
+			</div>
+			<ul class="header_link">
+				<li><a target="_blank" href="http://www.yhte.net/">公司网站</a></li>
+				<li><a target="_blank" href="">反馈建议</a></li>
+				<li><a target="_blank" href="http://www.baidu.com/">帮助中心</a></li>
+				<li><a target="_blank" href="">客服</a></li>
+			</ul>
+		</div>
+		<div id="login" class="login_container">
+			<div class="login_box">
+				<div class="login_title">
+					<h1>登陆地图下载器</h1>
+				</div>
+				<div id="web_login" class="login_operate" style="display: block">
+					<form id="loginform" method="get" action="../LoginServlet">
+						<div class="username">
+							&nbsp; 用户名：<input type="text" id="uin" name="username">
+						</div>
+						<div class="password">
+							用户密码：<input id="pasw" type="password" name="password">
+						</div>
+						<div class="about_password">
+							<input id="remerber_password" class="remerber_password"
+								type="checkbox" tabindex="5"> <label
+								for="remerber_password">记住登录状态</label> <a class="forgetPassword"
+								target="_blank" href="">忘记密码？</a>
+						</div>
+						<div class="login-submit" style="">
+							<input id="btlogin" class="login_btn" type="submit" value="登录">
+								<input type="reset">
+						</div>
+					</form>
+				</div>
+				<div class="login_tips">
+					<p>
+						<span class="gray">还没有账户？</span> <a href="">立即注册</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="map_advert">
+			<div class="advert_pic">
+				<img alt="欢迎使用地图下载器！" src="resources/images/2.jpg"
+					style="width: 146px; height: 168px;">
+			</div>
+			<div class="advert_txt">
+				<h1>
+					<a target="_blank" href="http://www.yhte.net/">DMC,常使用!</a>
+				</h1>
+				<p>dmc</p>
+				<p>tyle</p>
+				<p>system</p>
+			</div>
+		</div>
+		<div class="map_intro">
+			<ul class="gray">
+				<li>您可以使用地图下载器下载地图</li>
+				<li>您还可以.......</li>
+				<li>手机用户可以......</li>
+			</ul>
+		</div>
+		<div class="footer gray">
+			<ul class="footer_link">
+				<li><a target="_blank" href="">关于dmc</a></li>
+				<li><a target="_blank" href="">about dmc</a></li>
+				<li><a target="_blank" href="">服务条款</a></li>
+				<li><a target="_blank" href="">客服中心</a></li>
+			</ul>
+		</div>
+	</div>
+
+</body>
+</html>

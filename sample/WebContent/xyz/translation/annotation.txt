@@ -1,0 +1,301 @@
+@argument 表示该类所基于的基类，继承其他的类并添加自己的属性和方法，类似extent
+	语法：@augments otherClass
+			otherClass - 必选: 基于的类的描述
+	例子：/**
+		   * @constructor
+		   * @augments GeneralWriter
+		   */
+			function SpecialWriter() {
+			}
+@author 编码人员
+	语法：@author authorDescription
+			authorDescription - 必选: 提供有关的作者的信息，典型的事姓名，邮箱和地址 
+	例子：/**
+		   * @author <a href="mailto:micmath@gmail.com">  Michael Mathews</a>
+		   */
+    其他：允许添加多个作者信息
+@borrows 该类里面引用了其他类中的方法和属性
+	语法：@borrows otherMemberName as thisMemberName
+		    otherMemberName - 必选: 其他类的名称路径
+	    	thisMemberName - 必选: 新添加类的名字 
+	例子：/**
+		   * @constructor
+		   * @borrows Remote#transfer as this.send
+		   */
+			function SpecialWriter() {
+			    this.send = Remote.prototype.transfer;
+			}
+@class （将一个方法标志为构造器）添加类的描述
+	语法：@class description 可选: 类的描述
+	例子：/**
+		    Creates a new Person.
+		    @class Represents a person. 
+		  */ 
+			Person = function() {
+			}
+@constant 指出一个变量的值为常数
+	语法：@constant
+	例子：/**
+		   * @constant
+		   */
+           const acceleration = 9.80665;
+@constructor 明确一个函数是某个类的构造函数
+	语法：@constructor
+	例子：	/**
+		    Creates a new Person.
+		    @constructor 
+			*/ 
+			Person = function() {
+			}
+
+			var p = new Person();
+@default 为一个对象的提供一个默认值
+	语法：@default
+	valueDescription -bx: 默认值的描述
+	例子：	/** @constructor */
+			function Page(title) {
+			    /**
+			     * @default "Undefined"
+			     */
+			     this.title = title || "Undefined";
+			}
+@deprecated 指示一个函数已经废弃，而且在将来的代码版本中将彻底删除。要避免使用这段代码 
+	语法：@deprecated deprecatedDescription
+			deprecatedDescription - 提供所需要删除的代码的信息
+	例子：  /**
+			 * @deprecated Since version 0.5. You should now use NewFoo.
+			 */
+			function Foo() {
+			}
+			}}}inks to other wiki pages
+@description 对象（function/variable/constructor）的描述
+	语法：@description description
+			description - 必选: 对对象的描述
+	例子：  /**
+		    @description Creates a new Person.
+		    @constructor
+			*/ 
+			Person = function() {
+			}
+@event 提供一个当一个同名事件产生时即销毁的function
+	语法：@event
+			与@function的语法类似
+	例子：	/**
+			 * @event
+			 * @param {Boolean} clockwise
+			 */
+			Cocktail.prototype.stir = function(clockwise) {
+			}
+@example 提供小段代码解释用法
+	语法：@example snippet
+			    snippet - 必选: 解释用法的小段代码
+    		    可同时使用多个该标签
+	例子：	/**
+			 * @example
+			 * var bleeper = makeBleep(3);
+			 * bleeper.flop();
+			 */
+@field 表明某变量指的是非function（强制使用JsDoc工具包记录一个非function对象）
+	语法：@field
+	例子：/**
+		  * @field
+		  */
+		  var pages = function(){
+		  }
+@fileOverview提供整个文件的使用说明
+	语法：@fileOverview fileDescription
+			otherTags
+		fileDescription - 必选: 文件的描述.
+	    otherTags - 一般这几个允许使用: @author, @version.
+	    Note:  有@fileOverview 标签的文件一般只有一个文档注释. 
+	例子：  /**
+			 * @fileOverview This file has functions related to documenting JavaScript.
+			 * @author <a href="mailto:micmath@gmail.com">Michael Mathews</a>
+			 * @version 1.0.1
+			 */
+
+@function 指明该变量为一个function
+	语法：@function      
+	例子：  /**
+			 * @function
+			 */
+          var paginate = paginateFactory(pages);
+          如果没有该标签，？？分页对象将被记录为一般对象？？
+@ignore 指明JsDoc工具应该忽略该对象
+	语法：@ignore     
+	例子：  /**
+			 * @constructor
+			 * @ignore
+			 */
+			function Foo() {
+			    this.bar = function() {
+			    }
+			}
+			当一个父对象被忽略，其子元素也会被忽略；
+@inner 指明一个function为内部function（内部function是在一个外部function范围内定义的，并且和该外部function没有直接联系）
+	语法：@ignore     
+	例子：  /**
+			 * @constructor
+			 * @ignore
+			 */
+			function Foo() {
+			    this.bar = function() {
+			    }
+			}
+			当一个父对象被忽略，其子元素也会被忽略；
+@link 创建一个HTML链接，指向指定的类。这与@see很类似，但{@link}能嵌在注释文本中 
+	语法：@anyTag This is some text {@link otherSymbol}.
+			    anyTag - 可以是任何标签.
+    			otherSymbol - 必选: 名称
+			 * This is similar to a {@link Printer} object but can also print to files.
+			 */
+			function Writer() {
+			}
+
+@memberOf 表明“父对象”或者上级对象
+	语法：@memberOf parentNamepath
+    	   parentNamepath - 必选: 名称 
+	例子：var Tools = {};
+			/** @namespace */
+			Tools.Dom = {};
+
+			/** @memberOf Tools.Dom */
+			var hiliteSearchTerm = function(term) {
+			}
+
+			Tools.Dom.highlightSearchTerm = hiliteSearchTerm;
+@name 
+	语法：@name theNamepath
+			theNamepath - 必选: 所要使用的名称路径，同时忽略周围代码
+	例子：  /**
+			 * @name hiliteSearchTerm
+			 * @function
+			 */
+			eval("window.hiliteSearchTerm = function(term) {};")
+@namespace 表明一个文字对象是名字空间(在一个全局名称下存放一系列的属性和方法)
+	语法：@namespace description
+			description - 可选: namespace的描述 
+	例子:   /**
+		    @namespace Holds functionality related to running plugins.
+			*/
+			Extensions.PluginManager = {
+			}
+
+			Extensions.PluginManager.load(plugin) {
+			}
+@param 描述函数（构造函数/方法）的参数
+	语法：@param {paramType} paramName paramDescription
+		    paramType - 可选: 参数类型
+		    paramName - 必选: 参数名称
+		    paramDescription - 可选: 有关参数的描述
+	例子：  /**
+			 * @param userName The name of the user.
+			 */
+			 function logIn(userName) {
+			        // ...
+			 }
+@private  指示一个类或函数是私有的。(私有类和函数不会出现在HTML文档中，除非运行JSDoc时提供了--private命令行选项 )
+	语法：@private
+	例子：  /**
+			 * @private
+			 * @constructor
+			 */
+			function Foo() {
+			    function inner() {
+			    }
+    
+    this.notPrivate = function() {
+    }
+}
+@property 
+	语法：@property {propertyType} propertyName propertyDescription
+		    propertyType - 可选: 属性的类型
+		    propertyName - 必选: 属性的名称
+		    propertyDescription - 可选: 属性相关的描述
+		    Note:与@param tag.语法相似
+	例子:/**
+		 * @class
+		 * @property {number} id The id of the person.
+		 */
+		function Person(id) {
+		    this.id = id;
+		}
+@public 指示一个类或函数是公有的。
+	语法：@public
+	例子：  /**
+			 * @constructor
+			 */
+			function Foo() {
+			    /**@public*/
+			    function inner() {
+			    }
+			}
+@requires 描述一个必选的资源 ，创建一个HTML链接，指向这个类所需的指定类 
+	语法：@requires requireDescription
+			    requireDescription - 必选: 所需资源的链接
+	例子：  /**
+			 * @requires ColorPicker
+			 */
+			function chooseColor() {
+			}
+@returns 函数或方法的返回值
+    语法：@returns {returnType} returnDescription
+    			returnType -可选: 返回值类型
+    		    returnDescription -可选: 附加描述 
+    例子：  /** 
+			 * @returns {Array} Lines from the file.
+			 */
+			function readLines(filepath) {
+			}
+@see 描述一个相关资源或链接
+	语法：@see seeDescription
+	      seeDescription - 必选: 链接的描述 
+	例子：  
+			 /**
+			 * @see ClassName#methodName
+			 * @see The <a href="http://www.example.com">Example Project</a>.
+			 */
+@since 表明某个方法或属性在某个特定的版本之后才是有效的
+	语法：@since versionDescription
+    		versionDescription - 必选: 版本的描述
+	例子： /** @since version 1.0.1 */
+			function Remote() {
+			}
+@static 表明某变量的使用不需要实例化或父对象
+	语法：@static
+	例子：Hello = {}
+			/**
+			 * @static
+			 */
+			Hello.World = function() {
+			    alert("Hello world");
+			}
+@throws 描述一个函数可能抛出的异常
+	语法：@throws {exceptionType} exceptionDescription
+			    exceptionType - 可选: 抛出的异常的类型
+    			exceptionDescription - 可选: 附加的描述
+	例子：  /** 
+			 * @throws {OutOfMemeory} If the file is too big.
+			 */
+			function processFile(path) {
+             }
+
+@type 描述一个变量值得类型或者函数返回值的类型
+	语法：@type typeName
+		   typeName - 必选: 类型名称
+	例子：  /**
+			 * @type Color
+			 */
+			function getColor() {
+            }
+@version 代码的版本描述
+	语法：@version versionDescription
+    	    versionDescription - 必选: 代码的版本
+    例子：  /**
+			 * @class
+			 * @version 2001 beta release
+			 */
+			function Hal() {
+			    this.sing = function(song) {
+			    }
+			}

@@ -1,0 +1,82 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+/**
+ * @author 许照云
+ *
+ */
+public class Settings implements ISettings {
+
+	private String path;
+	
+	/**
+	 * @param path
+	 */
+	public Settings(String path){
+		this.path = path;
+		File file = new File(path);
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public String get(String args){
+		// TODO Auto-generated method stub
+		String configuration = readconfig(this.path);
+		String configDetail = null;
+			//configDetail.format(format, configuration);
+			//configuration.startsWith(prefix)
+			int beginindex=configuration.indexOf(args);
+			int endIndex=configuration.indexOf("#", beginindex);
+			configDetail=configuration.substring(beginindex, endIndex);
+			return configDetail;
+		}
+		
+
+	private String readconfig(String file){
+		BufferedReader buffer = null;
+		try {
+			buffer = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+        StringBuilder lines = new StringBuilder();
+        String line;
+        try {
+			while( (line = buffer.readLine()) != null){
+			    lines.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return lines.toString();
+	}
+
+	@Override
+	public void set(String key, String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void set(String key, String value, String desc) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//public static void main(String[] args){
+		
+	//	Settings settings = new Settings("c:/ll.config");
+	//	settings.get("attr");
+	//}
+}

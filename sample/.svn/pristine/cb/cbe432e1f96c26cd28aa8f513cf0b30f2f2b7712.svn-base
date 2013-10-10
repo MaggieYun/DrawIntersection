@@ -1,0 +1,13 @@
+#coding=UTF-8
+class Point:
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
+
+	def offset(self,offsetX,offsetY):          
+		'''
+		平移坐标（将所有坐标平移到以center为原点的坐标系中）
+		@offsetX
+		@offsetY
+		'''
+		return Coord(self.x-offsetX,self.y-offsetY)

@@ -1,0 +1,23 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.IOException;
+
+/**
+ * @author 许照云
+ *
+ */
+public interface ISettings{
+	/**
+	 * @param args 用户输入参数或配置文件参数
+	 * @return  返回配置文件参数
+	 * @throws IOException 
+	 */
+	public String[] get(String args) throws IOException;
+	
+	/**
+	 * @param args
+	 */
+	public void set(String args);
+	
+	
+}

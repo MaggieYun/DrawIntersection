@@ -1,0 +1,271 @@
+package net.yhte.gis.xzyun.tilesystem;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import net.yhte.gis.xzyun.package1.CreateFileUtil;
+
+/**
+ * 
+ * @author 许照云
+ */
+public class TileSystem2 {
+	private static double MinLatitude = -85.051128;
+	private static double MaxLatitude = 85.05112878;
+	private static double MinLongitude = -180;
+	private static double MaxLongitude = 180;
+	// 节省内存
+	private static String address = "http://emap0.mapabc.com/mapabc/maptile?v=w2.61&x=";
+
+	/**
+	 * 
+	 * @param n
+	 * @param minValue
+	 * @param maxValue
+	 * @return 返回三个数中第二大的值
+	 */
+	private static double Clip(double n, double minValue, double maxValue) {
+		return Math.min(Math.max(n, minValue), maxValue);
+	}
+
+	/**
+	 * 
+	 * @param levelOfDetail 地图放大的等级范围
+	 * @return 256*2^等级范围
+	 */
+	public static int MapSize(int levelOfDetail) {
+		return 256 << levelOfDetail;
+	}
+
+	/**
+	 * 
+	 * @param latitude 给定的纬度
+	 * @param longitude 给定的经度
+	 * @param levelOfDetail 等级范围
+	 * @return 地理坐标转换为的像素坐标值
+	 */
+	public static Pixel LatLongToPixelXY(double latitude, double longitude,
+			int levelOfDetail) {
+		latitude = Clip(latitude, MinLatitude, MaxLatitude);
+		longitude = Clip(longitude, MinLongitude, MaxLongitude);
+
+		double x = (longitude + 180) / 360;
+		double sinLatitude = Math.sin(latitude * Math.PI / 180);
+		double y = 0.5 - Math.log((1 + sinLatitude) / (1 - sinLatitude))
+				/ (4 * Math.PI);
+
+		int mapSize = MapSize(levelOfDetail);
+		int pixelX = (int) Clip(x * mapSize + 0.5, 0, mapSize - 1);
+		int pixelY = (int) Clip(y * mapSize + 0.5, 0, mapSize - 1);
+
+		Pixel pixel = new Pixel();
+		pixel.x = pixelX;
+		pixel.y = pixelY;
+		return pixel;
+	}
+
+	/**
+	 * 
+	 * @param pixelX 像素X值
+	 * @param pixelY 像素Y值
+	 * @return 瓦片的像素坐标值
+	 */
+	public static Tile PixelXYToTileXY(int pixelX, int pixelY) {
+		int tileX = pixelX / 256;
+		int tileY = pixelY / 256;
+
+		Tile tile = new Tile();
+		tile.x = tileX;
+		tile.y = tileY;
+		return tile;
+	}
+
+	/**
+	 * @param base 文件的URL地址
+	 * @param fileName  要写入文件的本地文件路径
+	 * @throws IOException
+	 */
+	public void download(String base, String fileName) throws IOException {
+		// 读文件
+		URL url = new URL(base);
+		InputStream remoteStream = url.openStream();
+		byte[] bytes = new byte[remoteStream.available()];
+		if ((bytes.length) != -1) {
+			remoteStream.read(bytes);
+		}
+		File file = new File(fileName);
+		// 写文件
+		FileOutputStream outStream = new FileOutputStream(file);
+		BufferedOutputStream buff = new BufferedOutputStream(outStream);
+		buff.write(bytes);
+		buff.flush();
+		buff.close();
+	}
+
+	/**
+	 * 
+	 * @param levelOfDetail1 等级范围中较小的等级
+	 * @param levelOfDetail2 等级范围中较大的等级
+	 * @param latitude1 左下角的纬度
+	 * @param longitude1 左下角的经度
+	 * @param latitude2 右上角的纬度
+	 * @param longitude2 右上角的经度
+	 * @throws IOException 抛出输入输出异常
+	 */
+
+	// 不用static静态方法
+	public void start(int levelOfDetail1, int levelOfDetail2, double latitude1,
+			double longitude1, double latitude2, double longitude2)
+			throws IOException {
+		long picNum = 0; // 每一等级要下载的图片数量
+		long num = 0; // 总共要下载的图片数量
+		long count = 0; // 下载计数，可用于进度条
+		String progress; // 用于计算下载进度
+
+		// 计算总共要下载的图片的数量
+		for (int lv = levelOfDetail1; lv <= levelOfDetail2; lv++) {
+
+			Pixel pixel1 = TileSystem2.LatLongToPixelXY(latitude1, longitude1,
+					lv);
+			Tile tile1 = TileSystem2.PixelXYToTileXY(pixel1.x, pixel1.y);
+
+			Pixel pixel2 = TileSystem2.LatLongToPixelXY(latitude2, longitude2,
+					lv);
+			Tile tile2 = TileSystem2.PixelXYToTileXY(pixel2.x, pixel2.y);
+
+			picNum = (tile2.x - tile1.x + 1) * (tile1.y - tile2.y + 1);
+			num += picNum;
+			System.out.println("要下载的图片数量为：" + num);
+		}
+
+		// 开始下载任务
+		for (int lv = levelOfDetail1; lv <= levelOfDetail2; lv++) {
+
+			Pixel pixel1 = TileSystem2.LatLongToPixelXY(latitude1, longitude1,
+					lv);
+			Tile tile1 = TileSystem2.PixelXYToTileXY(pixel1.x, pixel1.y);
+
+			Pixel pixel2 = TileSystem2.LatLongToPixelXY(latitude2, longitude2,
+					lv);
+			Tile tile2 = TileSystem2.PixelXYToTileXY(pixel2.x, pixel2.y);
+
+			picNum = (tile2.x - tile1.x + 1) * (tile1.y - tile2.y + 1);
+
+			for (int i = tile2.y; i <= tile1.y; i++) {
+				String dirName = "c:/" + "AllLayers/" + "L" + lv + "/" + "y"
+						+ i + "";
+				CreateFileUtil.createDir(dirName); // 需要完善 尝试不引用别的类的方法
+
+				for (int j = tile1.x; j <= tile2.x; j++) {
+					String base = address + j + "&y=" + i + "&z=" + lv + "&s=";
+					System.out.println(base);
+					String fileName = dirName + "/" + "x" + j + ".png";
+					count++; // 要考虑图片数量巨大时，可下载多张显示一次进度
+					progress = count + "/" + num;
+					System.out.println("下载进度为：" + progress);
+
+					// TileSystem2 tileSystemDown=new TileSystem2();
+					// //要不要使用静态方法？
+					// tileSystemDown.download(base, fileName);
+					// //变量名与原方法中变量名一样会不会不规范
+
+					download(base, fileName);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * 获取地理坐标
+	 * 
+	 * @param args 输入字符串数组
+	 * @return 返回用户输入的地理坐标范围
+	 */
+	public static double[] getgeocord(String[] args) {
+		double[] geocord = new double[4];
+		geocord[0] = Double.parseDouble(args[2]);
+		geocord[1] = Double.parseDouble(args[3]);
+		geocord[2] = Double.parseDouble(args[4]);
+		geocord[3] = Double.parseDouble(args[5]);
+		return geocord;
+	}
+
+	/**
+	 * 获取等级范围
+	 * 
+	 * @param args 输入字符串数组
+	 * @return 返回用户输入的等级范围
+	 */
+	public static int[] getlv(String[] args) {
+		int[] lv = new int[2];
+		lv[0] = Integer.parseInt(args[0]);
+		lv[1] = Integer.parseInt(args[1]);
+		return lv;
+	}
+
+	/**
+	 * 验证地理坐标参数的有效性
+	 * 
+	 * @param args
+	 * @return
+	 */
+	private static boolean validateArgumentsGeo(String[] args) {
+		// TODO Auto-generated method stub
+		// 判断逻辑
+		double[] geocord1 = TileSystem2.getgeocord(args);
+		if ((geocord1[0] > -85) && (geocord1[0] < 85) && (geocord1[1] > -180)
+				&& (geocord1[1] < 180) && (geocord1[2] > -85)
+				&& (geocord1[2] < 85) && (geocord1[3] > -180)
+				&& (geocord1[3] < 180)) {
+			return true;
+		} else
+			return false;
+	}
+
+	/**
+	 * 验证等级范围参数的有效性
+	 * 
+	 * @param args
+	 * @return
+	 */
+	private static boolean validateArgumentsLv(String[] args) {
+		int[] lv1 = TileSystem2.getlv(args);
+		if ((lv1[0] >= 0) && (lv1[1] <= 19) && (lv1[1] >= 0) && (lv1[1] <= 19)) {
+			return true;
+		} else
+			return false;
+	}
+
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
+
+	public static void main(String[] args) throws IOException {
+		boolean boolgeo = validateArgumentsGeo(args);
+		if (!boolgeo) {
+			System.out.println("您输入的地理坐标不符要求 请重新输入");
+			return;
+		}
+
+		boolean boollv = validateArgumentsLv(args);
+		if (!boollv) {
+			System.out.println("您输入的等级范围不符要求 请重新输入");
+			return;
+		}
+
+		double[] geocord1 = TileSystem2.getgeocord(args);
+		int[] lv1 = TileSystem2.getlv(args);
+
+		TileSystem2 tileSystem = new TileSystem2(); // 这样使用的好处是什么？如何考虑线程
+		tileSystem.start(lv1[0], lv1[1], geocord1[0], geocord1[1], geocord1[2],
+				geocord1[3]); // (多此一举 不用这样做，静态方法即可)
+
+	}
+
+}

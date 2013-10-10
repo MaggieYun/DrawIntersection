@@ -1,0 +1,12 @@
+var draw_bestpath = function(){
+	size=[955,600];
+	bbox=[13426192.883026948,3671416.5248470777,13430755.218152719,3674282.9134077714];
+
+	jsize=JSON.stringify(size);
+	jbbox=JSON.stringify(bbox);
+	$("#basemap").attr("src","../road?size="+jsize+"&bbox="+jbbox);
+
+};	
+
+
+

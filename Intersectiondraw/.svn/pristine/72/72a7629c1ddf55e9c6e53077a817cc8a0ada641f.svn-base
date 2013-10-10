@@ -1,0 +1,228 @@
+#coding=UTF-8
+
+from net.yhte.gis.intersection.Line import Line
+from net.yhte.gis.intersection.Canvas import Canvas
+from net.yhte.gis.intersection.Point import Point
+import Image, ImageDraw
+import math
+
+
+class Lane:
+	'''
+	车道类
+	'''
+	#ZX:u"直行"
+	#YZ:u"右转"
+
+	def __init__(self,lid):
+		self.id = lid
+		self.direction = None
+		self.status=None
+		self.bbox=None          #求出每个lane的范围（以便之后放置箭头和文字，设置颜色）
+
+	def set_direction(self,direction):
+		self.direction = direction
+
+	def get_bbox(self,canvas_size):
+		'''
+		暂定，还需将靠近图片中心的点偏移一定距离
+		'''
+		if self.id==1:
+			left=self.direction.line.get_boundp(canvas_size)
+		else:	
+			left=self.direction.line.get_pal_boundp(self.id-1)
+
+		right=self.direction.line.get_pal_boundp(self.id)
+		self.bbox=(left[0],left[1],right[0],right[1])
+
+
+
+class Direction:
+	'''
+	路口方向类（即路口的每个走向）
+	'''
+	def __init__(self,coord,did):
+		self.id=did
+		self.point = Point(coord)
+		self.lanes = []
+		self.line=None
+		self.leftpal_boundp=None
+
+
+	def add_lane(self,lane):
+		lane.set_direction(self)
+		self.lanes.append(lane)
+
+	def set_intersetion(self,intersection,angle):
+		self.intersection = intersection
+		self.angle = angle
+
+	def get_line(self):	
+		self.line=Line(self.intersection.center,self.point)	
+
+	def get_leftpal_boundp(self):
+		n=len(self.lanes)
+		self.leftpal_boundp=self.line.get_leftpal_boundp(n)	
+
+
+
+class Intersection:
+	'''
+	路口对象
+	'''
+	def __init__(self,uid,center):
+		#center:Coord的实例，坐标
+
+		self.id = uid
+		self.center = Point(center)   #(0,0)
+		self.directions = []
+		self.centerArea=None
+
+	def add_direction(self,direction):
+		direction.set_intersetion(self)
+		self.directions.append(direction)
+
+	def get_centerArea(self):
+
+		return	
+
+	def parse(self,data):
+		data=data
+		canvas_size=data["canvas_size"]
+		intersection=Intersection(data["inter_id"],data["centercoord"])
+		directs=data["coordlist"]
+		did=0
+		for direct in directs:
+			did=did+1
+			direction=Direction(direct[0],did)
+			direction.set_intersetion(intersection)
+			direction.get_line()
+			for i in range(direct[1]):
+				lane=Lane(i+1)
+				lane.get_bbox(canvas_size)
+				direction.add_lane(lane)
+			direction.get_leftpal_boundp()	
+		intersection.add_direction(direction)
+			
+
+
+
+
+# def parse(centercoord,coordlist,center_radius):
+# 	'''
+# 	@centercoord:路口中心点坐标
+# 	@coordlist:二维数组，存放每个direction上点的坐标和该direction的车道数量
+# 	@center_radius：中心空白区偏离图片中心点的距离
+# 	'''
+# 	centercord=centercord
+# 	coordlist=coordlist
+# 	R=center_radius
+
+# 	direction_num=len(coordlist)
+# 	center=Point(centercord)
+# 	for i in range(direction_num):
+	
+# 		"line"+str(i+1)=Line(center,Point(coordlist[i][0]),coordlist[i][1])
+
+
+
+
+
+
+if __name__ == '__main__':
+	size=(400,400)
+	im=Image.new("RGBA",size,"#f4f3ef")   #初始化一张图片，大小为整个路口的size
+	draw = ImageDraw.Draw(im)
+
+	canvas=Canvas(draw)
+	# centercoord=(200,200)
+	# coordlist=[[(0,0),4],[(400,200),3],[(200,400),3]]
+	# center_radius=56
+
+	data={"inter_id":1;
+		"centercoord":(200,200);
+		"coordlist":[[(0,0),4],[(400,200),3],[(200,400),3]];
+		"center_radius":56;
+		"canvas_size":(400,400)}
+
+#原始数据：
+	center = Point(200,200)
+	p1 = Point(0,0)
+	p2 = Point(400,200)
+	p3 = Point(200,400)
+	direction_num=3
+
+
+
+
+	line1 = Line(center,p1)
+	line1.get_k()
+	line1.get_b()
+	line1.get_boundp(size)
+	line1.get_leftpal_boundp(4)
+	print line1.k
+
+	line2 = Line(center,p2)
+	line2.get_k()
+	line2.get_b()
+	line2.get_boundp(size)
+	line2.get_leftpal_boundp(3)
+	print line2.k,line2.b,line2.boundp1,line2.boundp2
+
+	line3 = Line(center,p3)
+	line3.get_k()
+	line3.get_b()
+	line3.get_boundp(size)
+	line3.get_leftpal_boundp(3)
+	print line3.k
+
+	canvas.drawline(line1,"red",4)
+	canvas.drawline(line2,"blue",4)
+	canvas.drawline(line3,"green",4)
+	# canvas.drawline(line1,"white",2)
+	# canvas.drawline(line2,"white",2)
+	# canvas.drawline(line3,"white",2)
+
+	canvas.draw_palline(line1,0,"black")
+	canvas.draw_palline(line2,0,"black")
+	canvas.draw_palline(line3,0,"black")
+	for i in range(1,5):
+		line1.get_pal_boundp(i)
+		canvas.draw_palline(line1,i,"black")
+	for i in range(1,4):	
+		line2.get_pal_boundp(i)
+		canvas.draw_palline(line2,i,"black")
+	for i in range(1,4):	
+		line3.get_pal_boundp(i)
+		canvas.draw_palline(line3,i,"black")
+
+
+	line1.get_angle()
+	line2.get_angle()
+	line3.get_angle()
+	print line1.angle,line2.angle,line2.angle
+
+	line1p0=center.move(line1.angle,56)
+	line1p1=line1p0.move(line1.angle+math.pi/2,4*10)
+	line1p2=line1p0.move(line1.angle-math.pi/2,4*10)
+
+	line2p0=center.move(line2.angle,56)
+	line2p1=line2p0.move(line2.angle+math.pi/2,3*10)
+	line2p2=line2p0.move(line2.angle-math.pi/2,3*10)
+
+	line3p0=center.move(line3.angle,56)
+	line3p1=line3p0.move(line3.angle+math.pi/2,3*10)
+	line3p2=line3p0.move(line3.angle-math.pi/2,3*10)
+	
+
+
+
+	linelist=[(line1p1.x,line1p1.y),(line1p2.x,line1p2.y),(line3p1.x,line3p1.y),(line3p2.x,line3p2.y),(line2p1.x,line2p1.y),(line2p2.x,line2p2.y)]
+	print linelist
+	canvas.draw_center_area(linelist,"#f4f3ef","black")
+
+
+
+	# print line1.attr1,line1.attr2
+	# last_im=im.rotate(90)
+	im.save(r"c:\result.png","png")	

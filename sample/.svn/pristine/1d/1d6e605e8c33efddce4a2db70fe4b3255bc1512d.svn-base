@@ -1,0 +1,99 @@
+#coding=UTF-8
+import Image
+import sqlite3
+import os
+import string,cStringIO
+
+try:
+    from sqlite import encode, decode
+except ImportError:
+    import base64
+    sqlite3.encode = base64.encodestring
+    sqlite3.decode = base64.decodestring
+else:
+    sqlite3.encode = encode
+    sqlite3.decode = decode
+
+def init_db(path,name,z):
+    '''
+    @param path:新建数据库路径
+    @param name: 数据库名称 
+    @return: 返回新建的数据库
+    '''
+    conn = sqlite3.connect(path + os.sep + name + ".sqlite")
+    c = conn.cursor()
+    tblname="layer"+str(z)
+    sql = "select count(*) from sqlite_master where type='table' and tbl_name='%s'"%tblname
+    print sql
+    c.execute( sql)
+    if c.fetchall()[0][0] == 0:
+    	c.execute('''create table '''+tblname+''' (z,x,y,data)''')
+    conn.commit()
+    c.close()
+    return conn
+
+def loop(path):
+    '''
+    @param path:等级范围目录
+    @return:  width:行数row，height：column，列数，tilelist，一个等级下图片目录列表
+    '''
+    tilelist=[]
+    width,height = 0,0
+    if os.path.isdir(path):
+    	dirs = os.listdir(path) 
+    	height = len(dirs) 
+    	for c_dir in dirs:    #求width和height方法仅在此例中适用
+    		width = loop(os.path.join(path,c_dir))[1]  #递归函数
+    		tilelist+=loop(os.path.join(path,c_dir))[2] 
+    else:
+#    	print path
+    	tilelist.append(path)      
+#    print tilelist,width,height	
+    return (width,height,tilelist)
+	
+
+def save_img(img_path,db_path,db_name): 
+    '''
+    图片存数据库
+    ''' 
+    if os.path.isdir(img_path):   #传入的参数是等级范围文件夹的上一级目录
+        dirs = os.listdir(img_path) #指定目录下所有的等级文件名
+        for lvdir in dirs:   #遍历每个等级
+            newpath=os.path.join(img_path,lvdir) #某一等级文件地址
+            width=height=0
+            tilelist=[]
+            width,height,tilelist=loop(newpath) #某一个等级下的，row，column信息，z值都相同
+            
+            z=int((tilelist[0].split(os.sep))[2][1:])
+            conn = init_db(db_path,db_name,z)  #初始化数据库,新建一张数据表
+            tblname="layer"+str(z)
+            c = conn.cursor()
+            
+            n=0      
+            for i in range(height):
+                for j in range(width):
+                    par=[]
+                    par=tilelist[n].split(os.sep)
+#                    z=int(par[2][1:])
+                    row=int(par[3][1:],16)
+                    col=int(par[4][1:8],16)
+                    
+                    
+                    
+                    inn = cStringIO.StringIO()
+                    Image.open(tilelist[n]).save(inn,"png")
+                    
+                    sql = '''insert into '''+tblname+''' (z,x,y,data) values (%d,%d,%d,?)'''%(z,col,row)
+                    print n,i,j,tilelist[n]
+                    c.execute(sql, (sqlite3.Binary(inn.getvalue()),))
+                    n=n+1
+                    if n%20==0:
+                        conn.commit()
+            conn.commit()    
+            c.close()			
+
+if __name__ == "__main__":
+	save_img(r'C:\AllLayers',r'G:\pySaveImg','cs4')
+	
+	
+

@@ -1,0 +1,107 @@
+<meta charset="utf-8">
+<title>Test</title>
+<link rel="stylesheet" type="text/css" href="css/vcs.css"/>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+<script type="text/javascript" src="core.js"></script>
+<script type="text/javascript">
+	var onError = function(){
+		console.dir(arguments[0]);
+	};
+</script>
+<body>
+	<p>
+		<input id="btnLoad" type="button" value="加载视频控件"></input>
+		<input id="btnLogin" type="button" value="登录"></input>
+		<input id="btnStart" type="button" value="播放"></input>
+		<input id="btnPlayBack" type="button" value="点播"></input>
+		<br>
+		视频播放插件最新版本号：
+		<input id="ocxVersion" type="text"></input>
+		视频播放插件最新版本下载Url：
+		<input id="ocxUrl" type="text"></input>
+		<input id="checkOcx" value="检查视频播放插件更新"></input>
+		<br>
+		视频点播插件最新版本号：
+		<input id="rpcVersion" type="text"></input>
+		视频点播插件最新版本下载Url：
+		<input id="rpcUrl" type="text"></input>
+		<input id="checkRpc" value="检查视频点播插件更新"></input>
+		<br>
+		<input id="btnStop" type="button" value="关闭"></input>
+	</p>
+	<div id="videoPanel"></div>
+</body>
+<script type="text/javascript">
+	//创建视频插件
+	var video;
+
+	var options = {
+		width:800,
+		height:500,
+		rpcUseable:true,
+		minIcon:"images/w_min.png",
+		closeIcon:"images/w_close.png",
+		onerror:function(){
+			console.log("出错!");
+		}
+	};
+
+	var onBtnLoadHandler = function(){
+		video = VideoClient.getInstance("videoPanel",options);
+		//获取版本号
+		alert("视频播放插件版本号:"+video.GetOcxVersion());
+		alert("点播插件版本号:"+video.GetRpcVersion());
+	};
+
+	var onBtnLoginHandler = function(){
+		//登录视频服务器
+		video.Login("172.16.60.30",3501,"admin","1");
+	};
+
+	var onBtnStartHandler = function(){
+		//播放视频
+		var bool = video.StartVideo("YHTE_P0067","大门");
+		//console.log(bool);
+	};
+	
+	var onBtnStartPlayBackHandler = function(){
+		//播放视频
+		var bool = video.StartPlayback("YHTE_P0067","大门");
+		//console.log(bool);
+	};
+	
+	var checkOcx = function(){
+		var isNew = video.checkOcxVersion($("#ocxVersion").val(), $("#ocxUrl").val());
+		if(isNew){
+			alert("视频播放插件为最新版本！");
+		}else{
+			alert("视频播放插件不是最新版本，需要更新！");
+		}
+	}
+	
+	var checkRpc = function(){
+		var isNew = video.checkRpcVersion($("#rpcVersion").val(), $("#rpcUrl").val());
+		if(isNew){
+			alert("视频点播插件为最新版本！");
+		}else{
+			alert("视频点播插件不是最新版本，需要更新！");
+		}
+	}
+
+	var onBtnStopHandler = function(){
+		video.stopAllVideo();
+	};
+
+	$(function(){
+		$("#btnLoad").click(onBtnLoadHandler);
+		$("#btnLogin").click(onBtnLoginHandler);
+		$("#btnStart").click(onBtnStartHandler);
+		$("#btnPlayBack").click(onBtnStartPlayBackHandler);
+		$("#btnStop").click(onBtnStopHandler);
+		$("#checkOcx").click(checkOcx);
+		$("#checkRpc").click(checkRpc);
+	});
+
+	
+</script>

@@ -1,0 +1,62 @@
+<meta charSet="utf-8">
+<style>
+#map{
+	border:solid #cccccc 1px;
+}
+</style>
+<body>
+	<canvas id="map" width="550" height="250"></canvas>
+	<br/>
+	<input type="button" value="生成路径" onclick="gen_grid(5);"></input>
+	<input type="button" value="轨迹回放" onclick="connect();"></input>
+</body>
+<script type="text/javascript">
+	//找到canvas容器
+	var canvas = document.getElementById('map');
+	//获取绘图上下文
+	var ctx = canvas.getContext('2d');
+
+	//随机生成一个canvas范围内的像素坐标位置
+	var simulateData = function(){
+		var x = Math.round(Math.random()*(canvas.width-10));
+		var y = Math.round(Math.random()*(canvas.height-10));
+		return [x,y];
+	};
+
+	//用于存储模拟网格节点
+	var points = [];
+
+	//创建模拟网格节点
+	var gen_grid = function(size){
+		ctx.clearRect(0,0,550,250);  //清空canvas
+		points=[];                   //清空二维数组
+		for (var i = size - 1; i >= 0; i--) {  //生成随机点，并绘制点
+			var pos = simulateData();
+			ctx.beginPath();
+			ctx.arc(pos[0],pos[1],5,0,Math.PI*2,true); 
+			ctx.fillText(i+1, pos[0]+5,pos[1]+10);
+			points.push(pos);
+			ctx.stroke();
+		}	
+
+		for (var i = 0; i <=size-1; i++){  //连接点生成路径
+			for (var j=i+1;j<=size-1;j++){
+				ctx.beginPath();
+				ctx.moveTo(points[i][0],points[i][1]);	
+				ctx.lineTo(points[j][0],points[j][1]);	
+				ctx.stroke();
+			}
+
+		}
+	};
+
+	//连接points中的点
+	var connect = function(){
+		
+	};
+
+	//寻路
+	var route = function(){
+
+	};
+</script>

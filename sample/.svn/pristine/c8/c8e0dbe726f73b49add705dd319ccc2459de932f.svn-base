@@ -1,0 +1,149 @@
+
+var aStar=function(points,segments,start,end){		
+
+	var openList=[];  //开启列表
+	var closeList=[];  //关闭列表
+	//var parentList=[]; //父节点列表
+
+	openList.push(start);	
+
+	do{
+		var currentNode;  //当前节点
+		var currentNodeNum; //当前节点在开启列表中的位置			
+		var parentNode;		//父节点
+		var currentG;  //当前节点的G值					
+
+		if(openList.length==1 && openList[0]==start){
+			currentNode=openList[0];
+			console.log("当前节点的编号是："+currentNode.getId());
+			currentNodeNum=0;
+			currentG=0;
+			
+		}else{
+			currentNodeNum=getCurrentNodeNum(openList);			
+			currentNode=openList[currentNodeNum];
+			console.log("当前节点的编号是："+currentNode.getId());
+			currentG=currentNode.getG();							
+		}
+		 			 
+		closeList.push(currentNode); //将当前节点添加至关闭列表中
+		openList.splice(currentNodeNum,1); //将当前节点从开启列表中删除 
+		if(closeList[closeList.length-1]==end){
+			break;
+		}
+		//var currentSegments=[];
+		//currentSegments=currentNode.addSegment(segment);
+		var neighbourNodes=currentNode.getNeighbour(); //获取当前节点的临近节点
+		console.log("当前点的临近节点数目："+neighbourNodes.length);
+		//遍历当前节点的临近节点，进行处理
+		for(var i=0;i<neighbourNodes.length;i++){  
+
+			var theG;			
+
+			if(isInCloseList(neighbourNodes[i],closeList)){
+				continue;
+
+			}else if(isInOpenList(neighbourNodes[i],openList)==false){
+				openList.push(neighbourNodes[i]);
+				neighbourNodes[i].setParent(currentNode);
+				parentNode=neighbourNodes[i].getParent();
+				neighbourNodes[i].setG(parentNode);				
+				neighbourNodes[i].setH(end);
+				neighbourNodes[i].setF(neighbourNodes[i].getG(),neighbourNodes[i].getH());
+
+				console.log("临近节点的父节点编号："+parentNode.getId());
+				console.log("临近节点的编号："+neighbourNodes[i].getId());
+				console.log("G:"+neighbourNodes[i].getG()+"H:"+neighbourNodes[i].getH()+"F:"+neighbourNodes[i].getF());
+				
+				
+			}else if(isInOpenList(neighbourNodes[i],openList)==true){	
+				parentNode=neighbourNodes[i].getParent();				
+				theG=neighbourNodes[i].getG();								
+				if(currentG+neighbourNodes[i].distance(currentNode)<theG){					
+					neighbourNodes[i].setParent(currentNode);
+					parentNode=neighbourNodes[i].getParent();
+					neighbourNodes[i].setG(parentNode);
+					neighbourNodes[i].setH(end);
+					neighbourNodes[i].setF(neighbourNodes[i].getG(),neighbourNodes[i].getH());
+
+					console.log("（父节点需要调整）该临近节点在开启列表中，它的父节点编号："+parentNode.getId());
+					console.log("临近节点的编号："+neighbourNodes[i].getId());
+					console.log("G:"+neighbourNodes[i].getG()+"H:"+neighbourNodes[i].getH()+"F:"+neighbourNodes[i].getF());
+				}else{	
+					parentNode=neighbourNodes[i].getParent();				
+					console.log("该临近节点在开启列表中，它的父节点编号："+parentNode.getId());
+					console.log("临近节点的编号："+neighbourNodes[i].getId());
+					console.log("G:"+neighbourNodes[i].getG()+"H:"+neighbourNodes[i].getH()+"F:"+neighbourNodes[i].getF());
+					continue;
+				}
+			}
+		}
+
+	}while(openList.length!=0);
+	//console.log(closeList.length);
+	return closeList;	
+};
+
+
+var getRoute=function(){
+	var startValue=document.getElementById("startNode").value;
+	var endValue=document.getElementById("endNode").value;
+	var start=screenPoints[startValue]; //起点
+	var end=screenPoints[endValue];
+	var closeList=aStar(screenPoints,screenSegments,start,end);				
+	var result=[];
+	if(closeList[closeList.length-1]!=end){
+		alert("路径不存在！")
+	}else{
+		result.push(end);
+		var process=end;
+		while(process.getParent()!=null){
+			process=process.getParent();
+			result.push(process);
+		}	
+	}
+	return result;
+};
+
+
+/*
+* 判断临近节点是否在开启列表中，在返回true，否则false
+*/
+var isInOpenList=function(neighbour,openList){
+	for(var i=0;i<openList.length;i++){
+		if(neighbour==openList[i]){
+			return true;
+		}
+	}
+	return false;
+}
+/*
+* 判断临近节点是否在关闭列表中，在返回true，否则false
+*/
+var isInCloseList=function(neighbour,closeList){
+	for(var i=0;i<closeList.length;i++){
+		if(neighbour==closeList[i]){
+			return true;
+		}
+	}
+	return false;
+};
+
+/*
+* 遍历开启列表，找到F值最小的节点，设为当前节点
+* @return 当前节点
+*/
+var getCurrentNodeNum=function(openList){		 
+	var minF=openList[0].getF();
+	//var minFNode=openList[0];
+	var minFNum=0;		
+	for(var i=1;i<openList.length;i++){			
+		if(minF>openList[i].getF()){
+			minF=openList[i].getF();
+			//minFNode=openList[i];	
+			minFNum=i;			
+		}
+	}
+	return minFNum;		
+};
+

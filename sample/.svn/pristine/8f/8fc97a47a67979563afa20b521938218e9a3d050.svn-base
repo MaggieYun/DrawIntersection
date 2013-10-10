@@ -1,0 +1,34 @@
+
+/**
+ * 是否相等
+ */
+var equal = function(a, b) {
+	if (a === b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
+/**
+ * 数组中是否包含某元素
+ */
+Array.prototype.in_arr=function(item){
+	for(var i=0;i<this.length;i++)  
+	{  
+	if(this[i] == item)  
+	return true;  
+	}  
+	return false;  
+};
+/**
+ * 从数组获得指定数组id成员
+ */
+Array.prototype.getFormArrr=function(id){
+	var temp=[];
+	for(var i=0;i<id.length;i++)  
+	{  
+		temp[i]=this[id[i]];
+	}
+	return temp;
+};

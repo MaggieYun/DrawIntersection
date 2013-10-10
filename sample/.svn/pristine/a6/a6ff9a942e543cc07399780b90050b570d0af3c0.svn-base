@@ -1,0 +1,140 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+input [type="text"] {
+	width: 100px;
+	height: 50px;
+	margin: 0;
+	padding: 0;
+}
+
+.frame {
+	width: 500px;
+	height: 500px;
+	margin: 0;
+	padding: 0;
+    border:solid 1px red;
+}
+
+p,p>div {
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+</style>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+	$(document).ready(
+			function() {
+			var IbsWindow = function(config){
+				this.width = config["width"]||500;
+				this.height = config["height"]||500;
+
+				this.menu = [];
+				this.dom = null;
+
+				this.createFrame = function(){
+					this.dom = $("<div/>").appendTo($("body")).addClass("frame");
+				};
+
+				this.addItem = function(item){
+					this.menu.push(item);
+					item.addContent(this.dom);
+				};
+
+				this.getMenu = function(){
+					return this.menu;
+				};
+			};
+
+			var Item = function(config){
+				this.content = config["content"];
+                
+                this.fontcolor=config["fontcolor"];
+                
+                this.fontsize=config["fontsize"];
+                
+                this.fontstyle=config["fontstyle"];
+                
+				this.dom = null;
+                
+				this.addContent = function(ibsWindow){
+					this.dom = $("<p/>").html(this.content).css({
+								"font-size" : this.fontsize + "px",
+								"color":this.fontcolor,"font-style":this.fontstyle
+								});
+					ibsWindow.append(this.dom);
+				};
+                
+            
+            /*var Content=function(config){
+                this.fontcolor=config["fontcolor"];
+                
+                this.fontsize=config["fontsize"];
+                
+                this.style=config["style"];
+				
+                };
+                */
+			};
+            
+			//创建一个预览窗口
+				var ibs = new IbsWindow({
+					width:500,
+					height:500
+				});
+
+				ibs.createFrame();
+         		
+				var item = new Item({
+					content:$("#mes1").val(),
+                    fontsize:$("#fontsize").val(),
+                    fontcolor:$("#fontcolor").val(),
+                    fontstyle:$("#fontstyle").val()
+				});
+                /*var content=new Content({
+                    fontsize:$("#fontsize").val(),
+                    fontcolor:$("#fontcolor").val(),
+                    
+                });
+                */
+				ibs.addItem(item);
+                
+                 $("#bt1").click(function(){
+                    $("p").hide();
+                 	var mes=$("#mes1").val();
+                    var arr=mes.split(" ");
+                    for(var i=0;i<=arr.length;i++){
+                        var item = new Item({
+                        content:arr[i],
+                        fontsize:$("#fontsize").val(),
+                        fontcolor:$("#fontcolor").val(),
+                        fontstyle:$("#fontstyle").val()
+				        });
+                		ibs.addItem(item);
+                    };    
+	            });
+			});
+</script>
+</head>
+<body>
+	<div>
+		消息： <input type="text" id="mes1"> 
+         <select name="color" id="fontcolor">
+			<option value="red" selected="selected">红色</option>
+			<option value="green">绿色</option>
+			<option value="yellow">黄色</option>
+		</select> <br>
+		字体大小：<input type="text" id="fontsize"> <br>
+        字体样式：
+         <select name="fontstyle" id="fontstyle">
+			<option value="normal" selected="selected">正常</option>
+			<option value="italic">斜体</option>
+			<option value="oblique">倾斜</option>
+		</select> <br>
+		<button type="button" id="bt1">click</button>
+	</div>
+</body>
+
+</html>

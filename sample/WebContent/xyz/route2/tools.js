@@ -1,0 +1,117 @@
+/**
+ * 是否相等
+ */
+var equal = function(a, b) {
+	if (a == b) {
+		return true;
+	} else {
+		return false;
+	}
+};
+
+/**
+ * 数组中是否包含某元素
+ */
+Array.prototype.contains = function(item) {
+	for ( var i = 0; i < this.length; i++) {
+		if (this[i] === item) {
+			return true;
+		}			
+	}
+	return false;
+};
+/**
+ * 从数组获得指定数组id成员
+ */
+Array.prototype.getFormArrr = function(id) {
+	var temp = [];
+	for ( var i = 0; i < id.length; i++) {
+		temp[i] = this[id[i]];
+	}
+	return temp;
+};
+/**
+ * 已知三角形三边求角度
+ * @param lenA 点对边长
+ * @param lenB 点对边长
+ * @param lenC 点对边长
+ *  return ABC角度数组
+ */
+var getAngle=function(lenA,lenB,lenC){
+    
+    var cosA=(lenB*lenB+lenC*lenC-lenA*lenA)/(2*lenB*lenC);
+    var cosB=(lenA*lenA+lenC*lenC-lenB*lenB)/(2*lenA*lenC);
+    var cosC=(lenA*lenA+lenB*lenB-lenC*lenC)/(2*lenA*lenB);
+    
+    var angleA=Math.acos(cosA)*180/Math.PI;
+    var angleB=Math.acos(cosB)*180/Math.PI;
+    var angleC=Math.acos(cosC)*180/Math.PI;
+    
+    return [angleA,angleB,angleC];
+};
+/**
+ * 判断左转还是右转还是直行角度小于15度算直行
+ * @param {} p0
+ * @param {} pa
+ * @param {} pb
+ * @return {String}
+ */
+var judgeDirection = function(p0, pa, pb) {
+    // 两个向量
+    var vector_a0 = [p0[0] - pa[0], p0[1] - pa[1]];
+    var vector_0b = [pb[0] - p0[0], pb[1] - p0[1]];
+     
+    var angle=getAngle(p0[2],pa[2],pb[2]);
+
+    // 两向量的叉积
+    var multiplication = vector_a0[0] * vector_0b[1] - vector_a0[1]
+            * vector_0b[0];
+    if (multiplication > 0 && angle[0]<175) {
+        return "右转";
+    } else if (multiplication < 0 && angle[0]<175) {
+        return "左转";
+    } else {
+        return "直行";
+    }
+};
+
+    /**
+     * 坐标转换2
+     * @param point
+     * @returns 每个点的[x,y,id]
+     */
+    var convert2 = function(point,xyScale) {
+        var xmin=xyScale[0];
+        var ymax=xyScale[1];
+        var scale=xyScale[2];
+        var x=point[0];
+        var y=point[1];
+        var _x = (x/scale)+xmin;
+        var _y = ymax-(y/scale);
+        return [ _x, _y];
+    };
+     var pointsConvert=function(extent,scale){
+        var convert=new Convert(extent,scale);
+        var newPs = [];
+        for ( var i = 0; i < points.length; i++) {
+            newPs[i] = this.covLaLatoPixel(points[i]);
+        }
+        return newPs;
+    };
+    
+    /**
+     * 从segment中提取起始点值
+     * @param segments 路段
+     * @param canvas 画布
+     */
+    var getLinePs = function(segments) {
+        var convert=new Convert(extent,scale);
+        var LinePs=[];
+        for ( var i = 0; i < segments.length; i++) {
+            var startP = convert.covLaLatoPixel(segments[i].getStartP());
+            var endP = convert.covLaLatoPixel(segments[i].getEndP());
+            var linep=[startP,endP];
+            LinePs.push(linep);
+        }
+        return LinePs;
+    };

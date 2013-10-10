@@ -1,0 +1,76 @@
+<html>
+    <head>
+    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    	<style type="text/css">
+         	.frame{
+         		width:500px;
+         		height:400px;
+         		border:solid 1px red;
+         		margin:0;
+         		padding:0;
+         	}
+         	.frame>p{
+         		width:500px;
+         		height:50px;
+         		margin:0;
+         		padding:0;
+         		float: left;
+         	}
+         	p>div{
+         		width:50px;
+         		height:50px;
+         		float: left;
+         		border:solid 1px red;
+         		font-size: 50px; 
+         		margin:0;
+         		padding:0;
+         	}
+    	</style>
+    	<script type="text/javascript" src="jquery.js"></script>
+    	<script type="text/javascript">
+	    	$(document).ready(function(){
+	    		$("#bt1").click(function(){
+	            	$("<div></div>").appendTo($("body")).addClass("frame"); 
+	            });
+
+                
+	    		$("#bt2").click(function(mse1){
+	    			var mes1=$("#mes1").val();
+	    			var mes2=$("#mes2").val();
+	            	addMessage(mes1,"p1");
+	            	addMessage(mes2,"p2");
+	            });
+
+
+                 $("#bt3").click(function(){
+                 	$(".p1").addClass("on");
+                 	$("p").hide();
+	           		var t=setInterval(showMessage,1000);
+	            });
+
+                function addMessage(message,index){
+                    $("<p></p>").appendTo($(".frame")).addClass(index); 
+                	var arr=message.split("");
+                	for(var i=0;i<=arr.length;i++){
+                		$("<div/>").html(arr[i]).appendTo($("."+index));
+                	}
+                };
+                 function showMessage(){
+	            	$(".on").show();
+	            	$(".on").siblings().hide();
+                	$("p:first").toggleClass("on");
+                	$("p:last").toggleClass("on"); 
+	            };
+
+	    	});        
+    	</script>
+    </head>
+	<body>
+		<button type="button" id="bt1">Click1</button>
+		<button tyoe="button" id="bt2">Click2</button>
+	    <input type="text" id="mes1" style="width: 80px; height: 20px">
+	    <input type="text" id="mes2" style="width: 80px; height: 20px">
+	    <button type="button" id="bt3">Click1</button>
+		<button tyoe="button" id="bt4">Click2</button>
+	</body>
+</html>

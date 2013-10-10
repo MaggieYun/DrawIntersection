@@ -1,0 +1,22 @@
+package net.yhte.gis.xzyun.cores;
+/**
+ * @author 许照云
+ *
+ */
+public class GetTile{
+/**
+	 * 
+	 * @param pixelX 像素X值
+	 * @param pixelY 像素Y值
+	 * @return 瓦片的像素坐标值
+	 */
+	public static Tile PixelXYToTileXY(int pixelX, int pixelY) {
+		int tileX = pixelX / 256;
+		int tileY = pixelY / 256;
+
+		Tile tile = new Tile();
+		tile.x = tileX;
+		tile.y = tileY;
+		return tile;
+	}
+}

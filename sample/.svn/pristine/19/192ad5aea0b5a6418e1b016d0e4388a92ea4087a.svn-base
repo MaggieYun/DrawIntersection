@@ -1,0 +1,49 @@
+/**
+ * 
+ * @param p1 起点
+ * @param p2 终点
+ * @returns
+ */
+var Segement=function(p1,p2){
+	/**
+	 * 起点
+	 */
+	var _startP;
+	this.setStartP=function(value){
+		_startP=value;
+		return this;
+	};
+	this.getStartP=function(){
+		return _startP;
+	};
+
+	/**
+	 * 终点
+	 */
+	var _endP;
+    this.setEndP=function(value){
+    	_endP=value;
+    	return this;
+	};
+	this.getEndP=function(){
+		return _endP;
+	};	
+	
+	/**
+	 * 长度
+	 */
+	var _length;
+    var setLength=function(){
+    	_length=_startP.distance(_endP);
+    	return this;
+    };
+    var getLength=function(){
+        return _length;
+    };
+    
+	this.setStartP(p1);
+	this.setStartP(p2);
+};
+
+
+

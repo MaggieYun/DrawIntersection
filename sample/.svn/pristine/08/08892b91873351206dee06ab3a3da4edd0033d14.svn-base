@@ -1,0 +1,13 @@
+package net.yhte.gis.xzyun.tilesystem;
+
+public class Tile {
+	/**
+	 * x:tileºá×ø±ê
+	 */
+	public int x;
+
+	/**
+	 * y:tile×Ý×ø±ê
+	 */
+	public int y;
+}

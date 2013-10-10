@@ -1,0 +1,17 @@
+    $(function(){
+        var btnLong = $("#btnLong");
+        var btnShort = $("#btnShort");
+        var divBar = $(".progress");
+        btnLong.bind("click",btnAddClickHandler);
+        function btnAddClickHandler(){
+        var w = divBar.width();
+        if(w < num){
+            divBar.width(w+1);
+                $("p").text("w/num");
+        }else{
+            console.log("下载完成！");	
+                $("p").text("下载完成！");
+            }
+                                
+        };
+    });

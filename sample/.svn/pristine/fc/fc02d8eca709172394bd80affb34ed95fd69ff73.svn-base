@@ -1,0 +1,68 @@
+
+
+var draw_bestpath = function(){
+	//获取起点和终点的索引
+	var start=document.getElementById("startNode").value;   
+	var end=document.getElementById("endNode").value;
+	//post交互的url地址
+	// var url = "../bestpath";
+	$("#basemap").attr("src","http://127.0.0.1:8888/bestpath?startid="+start+"&endid="+end);
+
+};	
+
+
+var redraw = function(){
+	//获取起点和终点的索引
+	var startid=document.getElementById("startNode").value="";   
+	var endid=document.getElementById("endNode").value="";
+	$("#basemap").attr("src","http://127.0.0.1:8888/road");
+
+
+};
+
+
+var get_coords=function(event){
+	var x=event.clientX;
+	var y=event.clientY;
+	return [x,y];
+};
+
+
+var rect;
+
+var mouseDown=function(event){
+	var coord = get_coords(event);
+	console.log(coord[0],coord[1]);
+	if(!rect){   //jquery用法，尚不熟悉。
+		rect =  $("<div>").css({position:"absolute",border:"solid red 1px"}).appendTo($(".map"));
+	}
+	rect.css({top:coord[1],left:coord[0]}).width(1).height(1).attr("downX",coord[0]).attr("downY",coord[1]).show();
+};
+
+
+
+var mouseMove=function(event){
+	if(rect){
+		newcoord=get_coords(event);
+		var wh=Math.abs(rect.attr("downX")-newcoord[0]);
+		var ht=Math.abs(rect.attr("downY")-newcoord[1]);
+		rect.width(wh).height(ht).show();
+	}
+	
+};
+
+var mouseUp=function(event){
+	if(rect){
+//		lastcoord=get_coords(event);
+//		var wh=Math.abs(rect.attr("downX")-lastcoord[0]);
+//		var ht=Math.abs(rect.attr("downY")-lastcoord[1]);
+		rect.hide();
+	}	
+	
+};
+
+//JQuery监听事件格式
+// $(function(){
+// 	$("#btngetpath").bind("click",draw_bestpath);
+
+// });

@@ -1,0 +1,51 @@
+function getStatus()
+{
+	var url;
+	var xmlhttp;
+	if (window.XMLHttpRequest){
+		xmlhttp=new XMLHttpRequest();
+	}
+	else{
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	FileReader reader = new FileReader(new File("c:/status.txt"));
+	BufferedReader status = new BufferedReader(reader); 
+
+	url = "http://localhost:8080/sample/GetStatusServlet?status="+status;
+	
+	xmlhttp.open("GET",url,true);
+	
+	xmlhttp.setRequestHeader("Content-Type", "text/html;charset=UTF-8");
+	//这里如果不设定头部则会导致 firfox 发送数据错误，servlet接受到的参数为乱码，在IE中正常
+	xmlhttp.onreadystatechange = function(){
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
+			  var status=xmlhttp.responseText;
+			  showProgress(status);
+			  document.getElementById("mystatus").innerHTML=status;  
+		  }
+	};
+	xmlhttp.send();	
+	
+	
+}
+
+//每0.5秒 ,执行一次查询,从服务端获取下载进度，并发送给servlet
+function Interval(){
+	setInterval(getStatus,500);
+};
+
+
+function showProgress(m){
+	var divBar = $(".progress");
+	var w = divBar.width();//获取div当前宽度
+	var n=Float.parseFloat(m);
+	if(w < 50){
+		divBar.width=n*50;
+	}else{
+		console.log("已经到达最大长度50!");	
+		$("myspan").text("已经到达最大长度50!");
+	};
+
+};
+

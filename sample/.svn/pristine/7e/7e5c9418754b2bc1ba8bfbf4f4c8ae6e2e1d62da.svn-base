@@ -1,0 +1,52 @@
+#coding=UTF-8
+
+from package.Line import Line
+from package.Canvas import Canvas
+from package.Point import Point
+import Image,ImageDraw
+
+
+if __name__ == '__main__':
+	size=(400,400)
+	im=Image.new("RGBA",size,"#f4f3ef")   #初始化一张图片，大小为整个路口的size
+	draw = ImageDraw.Draw(im)
+
+	canvas=Canvas(draw)
+
+	center = Point(200,200)
+	p1 = Point(0,0)
+	p2 = Point(400,200)
+	p3 = Point(200,400)
+	# print center.x
+
+	line1 = Line(center,p1)
+	line1.get_k()
+	line1.get_b()
+	line1.get_boundp(size)
+	print line1.k
+
+	line2 = Line(center,p2)
+	line2.get_k()
+	line2.get_b()
+	line2.get_boundp(size)
+	print line2.k,line2.b,line2.boundp1,line2.boundp2
+
+	line3 = Line(center,p3)
+	line3.get_k()
+	line3.get_b()
+	line3.get_boundp(size)
+	print line3.k
+
+	canvas.drawline(line1,"red")
+	canvas.drawline(line2,"blue")
+	canvas.drawline(line3,"green")
+
+	for i in range(4):
+		line1.get_pal_boundp(i+1)
+		canvas.draw_palline(line1,"black")
+		line2.get_pal_boundp(i+1)
+		canvas.draw_palline(line2,"black")
+		line3.get_pal_boundp(i+1)
+		canvas.draw_palline(line3,"black")
+		
+	im.save("c:/result.png","png")

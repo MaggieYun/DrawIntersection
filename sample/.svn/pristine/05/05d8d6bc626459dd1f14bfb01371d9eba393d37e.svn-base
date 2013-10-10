@@ -1,0 +1,177 @@
+package net.yhte.gis.zxy.cores;
+
+import java.io.IOException;
+
+/**
+ * 定义切图系统相关工具方式
+ * 
+ * @author 张小颖
+ * 
+ */
+public class TileSystem {
+	private static final double MinLatitude = -85.05112878;
+	private static final double MaxLatitude = 85.05112878;
+	private static final double MinLongitude = -180;
+	private static final double MaxLongitude = 180;
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 * 
+	 */
+	public static void main(String[] args) throws IOException {
+	}
+
+
+	/**
+	 * 限定经纬度值
+	 * @param n
+	 * @param minValue
+	 * @param maxValue
+	 * @return 经纬度有效值
+	 */
+	private static double Clip(double n, double minValue, double maxValue) {
+		return Math.min(Math.max(n, minValue), maxValue);
+	}
+
+	
+	/**确定地图大小
+	 * 
+	 * @param levelOfDetail
+	 * @return 地图大小
+	 */
+	public static int MapSize(int levelOfDetail) {
+		return 256 << levelOfDetail;
+	}
+
+
+	/**
+	 * 经纬度转换为像素坐标
+	 * @param latitude1
+	 * @param longitude1
+	 * @param latitude2
+	 * @param longitude2
+	 * @param lev
+	 * @return 返回像素坐标
+	 */
+
+	public static MapPixel LatLongToPixelXY(double latitude1,
+			double longitude1, double latitude2, double longitude2, int lev) {
+
+		MapPixel mappixel = new MapPixel();
+		latitude1 = Clip(latitude1, MinLatitude, MaxLatitude);
+		longitude1 = Clip(longitude1, MinLongitude, MaxLongitude);
+		latitude2 = Clip(latitude2, MinLatitude, MaxLatitude);
+		longitude2 = Clip(longitude2, MinLongitude, MaxLongitude);
+
+		double x1 = (longitude1 + 180) / 360;
+		double sinLatitude1 = Math.sin(latitude1 * Math.PI / 180);
+		double y1 = 0.5 - Math.log((1 + sinLatitude1) / (1 - sinLatitude1))
+				/ (4 * Math.PI);
+
+		double x2 = (longitude2 + 180) / 360;
+		double sinLatitude2 = Math.sin(latitude2 * Math.PI / 180);
+		double y2 = 0.5 - Math.log((1 + sinLatitude2) / (1 - sinLatitude2))
+				/ (4 * Math.PI);
+
+		int mapSize = MapSize(lev);
+		mappixel.start_x = (int) Clip(x1 * mapSize + 0.5, 0, mapSize - 1);
+		mappixel.start_y = (int) Clip(y1 * mapSize + 0.5, 0, mapSize - 1);
+		mappixel.end_x = (int) Clip(x2 * mapSize + 0.5, 0, mapSize - 1);
+		mappixel.end_y = (int) Clip(y2 * mapSize + 0.5, 0, mapSize - 1);
+		return mappixel;
+	}
+
+
+	/**
+	 * 像素坐标转换为Tile坐标
+	 * @param pixelX1
+	 * @param pixelY1
+	 * @param pixelX2
+	 * @param pixelY2
+	 * @return 返回瓦片坐标
+	 */
+	public static MapTile PixelXYToTileXY(int pixelX1, int pixelY1,
+			int pixelX2, int pixelY2) {
+		MapTile maptile = new MapTile();
+		maptile.start_x = pixelX1 / 256;
+		maptile.start_y = pixelY1 / 256;
+		maptile.end_x = pixelX2 / 256;
+		maptile.end_y = pixelY2 / 256;
+		return maptile;
+	}
+
+	/**
+	 * 获得下载使用的tile
+	 * @param x1
+	 *            瓦片坐标x最小值
+	 * @param y1
+	 *            瓦片坐标x最大值
+	 * @param x2
+	 *            瓦片坐标y最小值
+	 * @param y2
+	 *            瓦片坐标y最大值
+	 * @param lev
+	 *            层级
+	 * @return 下载使用的参数
+	 */
+	public static Parameter judegTileLaLo(int x1, int y1, int x2, int y2, int lev) {
+		Parameter myparameter = new Parameter();
+		if (x1 < x2) {
+			myparameter.xmin = x1;
+			myparameter.xmax = x2;
+			myparameter.ymin = y2;
+			myparameter.ymax = y1;
+		} else {
+			myparameter.xmin = x2;
+			myparameter.xmax = x1;
+			myparameter.ymin = y1;
+			myparameter.ymax = y2;
+		}
+		myparameter.lev = lev;
+		return myparameter;
+	}
+
+	/**
+	 * 获得输入的经纬度
+	 * @param args
+	 *            输入的参数
+	 * @return 返回输入的经纬度
+	 */
+	public static InsertLL GetLaLoLev(String[] args) {
+		InsertLL myinsertll = new InsertLL();
+		myinsertll.start_x = Double.parseDouble(args[0]);
+		myinsertll.start_y = Double.parseDouble(args[1]);
+		myinsertll.end_x = Double.parseDouble(args[2]);
+		myinsertll.end_y = Double.parseDouble(args[3]);
+		return myinsertll;
+	}
+	/**
+	 * @param args 
+	 * @return 层级
+	 * 
+	 */
+	public static levelOfDetai GetLev(String[] args) {
+		levelOfDetai mylevelOfDetai = new levelOfDetai();
+		mylevelOfDetai.lev1=Integer.parseInt(args[4]);
+		mylevelOfDetai.lev2=Integer.parseInt(args[5]);
+		return mylevelOfDetai;
+		
+	}
+
+	/**
+	 * 输入经纬度范围值获得下载所需的参数
+	 * @param myinsertll
+	 * @param lev
+	 * @return 返回下载参数
+	 */
+	public static Parameter GetParameter(InsertLL myinsertll, int lev) {
+		MapPixel mappixel = LatLongToPixelXY(myinsertll.start_y,
+				myinsertll.start_x, myinsertll.end_y, myinsertll.end_x, lev);
+		MapTile maptile = PixelXYToTileXY(mappixel.start_x, mappixel.start_y,
+				mappixel.end_x, mappixel.end_y);
+		Parameter myParameter = judegTileLaLo(maptile.start_x, maptile.start_y,
+				maptile.end_x, maptile.end_y, lev);
+		return myParameter;
+	}
+}

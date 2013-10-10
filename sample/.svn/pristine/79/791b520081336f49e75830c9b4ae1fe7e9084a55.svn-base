@@ -1,0 +1,26 @@
+package net.yhte.gis.xzyun.api;
+
+/**
+ * @author 许照云
+ *
+ */
+public class ToHex{
+	
+	/**
+	 * @param x 一个十进制数
+	 * @return 八位十六进制数 
+	 */
+	public static String tenToHex(int x){
+		String name=Integer.toHexString(x);
+		int len=name.length();
+		String zeronum = null;
+		
+		if(len<8){  //十进制数转化为十六进制数会不会满八位数？
+			zeronum="00000000".substring(0, 8-len);	
+		}
+		String eighthex=zeronum+name;
+		return eighthex;
+		
+}
+	
+}

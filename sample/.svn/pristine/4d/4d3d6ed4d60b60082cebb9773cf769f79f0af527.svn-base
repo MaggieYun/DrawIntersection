@@ -1,0 +1,17 @@
+   var send = function(){
+	   var username = document.getElementById("uin").value;
+	   var password = document.getElementById("pasw").value;
+        var xhr = new XMLHttpRequest();
+        var url = "Login?username="+username+"&password="+password;
+        xhr.open("GET",url,true);
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState==4 && xhr.status==200){
+//                document.getElementById("uin").innerHTML=xhr.responseText;
+//                document.getElementById("pasw").innerHTML=xhr.responseText;
+            	alert(xhr.responseText);
+            }
+        };
+        xhr.send();
+    };
+    
+    

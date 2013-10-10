@@ -1,0 +1,306 @@
+js规范
+一、内容简要
+二、背景
+	javascript是一种客户端脚本语言，在谷歌开源工程种使用多用到它的。该编码指南指明了在javascript工程中各种可做与不可做的规定。
+三、javascript语法规范
+	var 声明时必须有关键字var；
+		decision：当没有给变量声明var时，该变量就会处于全局范围中，可能会与现有的值冲突。同时如果没有声明，很难分清变量的作用域（比如在局部范围中也可能轻易地在文件或者window中访问到）。所以声明时必须有关键字var。
+
+	contents 常量使用像 NAMES_LIKE_THIS这样的名字。适当的时候使用@const，务必不要使用const关键字
+		decision：
+		对于基本类型的常量只需要转换命名
+			/**
+			 * The number of seconds in a minute.
+			 * @type {number}
+			 */
+			goog.example.SECONDS_IN_A_MINUTE = 60;
+		对于非基本类型的常量，需使用@const来注释
+			/**
+			 * The number of seconds in each of the given units.
+			 * @type {Object.<number>}
+			 * @const
+			 */
+			goog.example.SECONDS_TABLE = {
+			  minute: 60,
+			  hour: 60 * 60
+			  day: 60 * 60 * 24
+			}
+		这个标记允许编译器进行强制常量的检验；
+		对于关键字const，IE不能进行解析，所以不能使用它
+
+		Semicolons 必须使用分号
+		依赖隐式的分割可能会引起细微的差异，那样的话会对调试错误产生困难。所以不要漏掉分号。
+		下面例子的代码有些地方漏掉分号的而出错。
+			// 1.
+			MyClass.prototype.myMethod = function() {
+			  return 42;
+			}  // 漏掉分号
+
+			(function() {
+			  // Some initialization code wrapped in a function to create a scope for locals.
+			})();
+
+
+			var x = {
+			  'i': 1,
+			  'j': 2
+			}  // 漏掉分号
+
+			// 2.  Trying to do one thing on Internet Explorer and another on Firefox.
+			// I know you'd never write code like this, but throw me a bone.
+			[normalVersion, ffVersion][isIE]();
+
+
+			var THINGS_TO_EAT = [apples, oysters, sprayOnCheese]  // 漏掉分号
+
+			// 3. conditional execution a la bash
+			-1 == resultOfOperation() || die();
+        接下来会怎样？
+        	1、javascript 报错--首先第一个函数的返回值是作为参数被第二个函数访问的，所以访问数字42出错；例子1上的语句会解释成, 一个函数带一匿名函数作为参数而被调用, 返回42后, 又一次被"调用", 这就导致了错误.
+        	2、第二个例子你有可能在调用call x[ffVersion][isIE]()时得到一个'no such property in undefined'的错误
+        	3.例三中，当 resultOfOperation() 返回非 NaN 时, 就会调用die, 其结果也会赋给 THINGS_TO_EAT.
+        为什么？
+            javascript的声明需要以分号结束，除非编译器可以推断的确存在结束。这三个例子，均是在语句中声明了函数/对象/数组直接量。只凭借结束的括号是不足以表明声明结束。除非下一个字符标记是个中缀？？或者括号运算符，否则javascript不会终止代码。
+            这些规则的确让人意想不到，所以务必不要忘记分号。
+        Nested functions 嵌套函数
+        	实际使用中嵌套函数用处很大，例如做延生以及隐藏帮助函数。
+        Function Declarations Within Blocks  
+            不要这样使用：
+            if (x) {
+						function foo() {}
+					}
+			尽管大多数脚本引擎支持块内函数声明，但是但是它不属于ECMAScript(见 ECMA-262,  13和14条) 的一部分。不同浏览器对于块内元素的声明反应是不一致的以及其违背后期ECMAScript方案的矛盾这两点可能会出现更糟糕的情况，ECMAScript只允许函数在两种地方声明：脚本的根声明列表中、函数体内。通常会使用函数表达式而不是初始化的变量来定义一个块内函数。
+			if (x) {
+			  var foo = function() {}
+			}
+		Exceptions 异常
+			基本上任何重要的开发都免不了异常的产生。
+		Custom exceptions 自定义异常
+			如果没有自定义异常，函数返回的出错信息可能是一个复杂并难以理解的的信息。处理这个问题的方法有传递带有出错信息的参考对象或者返回带有可能产生错误信息的对象，以上两个方法都不是很好，相当于原始的异常处理方法。
+		Standards features 标准特性
+		     通常由于非标准特性
+
+		     在实现可移植性和兼容性的最大化方面，标准特性是优于非标准特性的（例如： string.charAt(3) 优于 string[3]，获取数组元素时使用的是DOM函数而不是通过应用用封装好的快速接口实现。）。
+			if (x) {
+		封装基本类型
+			不应该封装基本类型，这是危险的编码方式。
+			var x = new Boolean(false);
+			  alert('hi');  // Shows 'hi'.
+			不要编写如上代码！！
+			}
+			但是可以进行类型转换
+			var x = Boolean(0);
+			if (x) {
+			  alert('hi');  // This will never be alerted.
+			}
+			typeof Boolean(0) == 'boolean';
+			typeof new Boolean(0) == 'object';
+			封装基本类型对进行类型转换（数字、字符串、逻辑）是很方便的。
+			  goog.base(this)
+		Multi-level prototype hierarchies 多层原型继承体系
+			多层原型体系表明javascript的继承特性。如果有个用户定义的类D以及以及另一个用户定义的类B作为其属性，这就是一个多层级属性。这个继承特性会变得越来越复杂。
+			因此，最好使用the Closure Library的goog.inherits()方法或者其他相似的。
+			function D() {
+			}
+			goog.inherits(D, B);
+
+			D.prototype.method = function() {
+			  ...
+			};
+		Method definitions 方法的定义
+
+			Foo.prototype.bar = function() { ... };
+			为构造器附加了方法和属性，首选的定义方式是这样的。
+			Foo.prototype.bar = function() {
+			  /* ... */
+			};
+		Closures 闭包
+			小心使用
+			创建闭包是js中很有效但也很容易被忽略。这里将举一个例子描述闭包是如何工作的。
+			然而必须记住，闭包保留了一个指向其封闭区域的指针。给DOM元素附加闭包时能够创建一个循环的引用，从而导致内存的泄露。看下面的代码：
+			function foo(element, a, b) {
+			   element.onclick = function() { /* uses a and b */ };
+			}
+			闭包函数保留对 element，a，b的引用，即使在函数中并没有使用element。由于element同时引用闭包，结果导致循环不会被垃圾收集清除.在这种情况下，代码可以这样写：
+			function foo(element, a, b) {
+			  element.onclick = bar(a, b);
+			}
+
+			function bar(a, b) {
+			  return function() { /* uses a and b */ }
+			}
+		eval()
+			只用于还原序列化（例。评估RPC反应）
+			eval（）的使用易混淆语义，当eval（）包含用户输入的字符串的话会更加危险。更加简洁和安全的编写代码时通常不提倡使用这个方法，然而eval使得还原序列化过程比备选方案non-eval更加简单，因而像评估RPC反应这样的使用是允许的。
+			还原序列化是将一系列的bytes转换为内存数据结构的过程。例如,你可能将一个对象写到一个文件中：
+			users = [
+			  {
+			    name: 'Eric',
+			    id: 37824,
+			    email: 'jellyvore@myway.com'
+			  },
+			  {
+			    name: 'xtof',
+			    id: 31337,
+			    email: 'b4d455h4x0r@google.com'
+			  },
+			  ...
+			];
+
+		     很简单地调用 eval 后, 把表示成文件的数据读取回内存中.
+		     类似的, eval() 对 RPC 响应值进行解码. 例如, 你在使用 XMLHttpRequest 发出一个 RPC 请求后, 通过 eval () 将服务端的响应文本转成
+             JavaScript 对象:
+                var userOnline = false;
+				var user = 'nusrat';
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.open('GET', 'http://chat.google.com/isUserOnline?user=' + user, false);
+				xmlhttp.send('');
+				// Server returns:
+				// userOnline = true;
+				if (xmlhttp.status == 200) {
+				  eval(xmlhttp.responseText);
+				}
+				// userOnline is now true.
+		with() {}
+			no
+			在程序中使用with语句会使得语意变得复杂甚至出错，因为with对象的属性可能会与局部变冲突，从而大幅度改变程序意义。例如下面的代码如何执行？
+			with (foo) {
+			  var x = 3;
+			  return x;
+			} 
+			答：任何东西。局部变量x可能会被foo的某个属性覆盖，甚至x可能有个setter，这种情况下将3赋给x后面可能还有许多代码执行。尽量不要使用with。
+		this 
+			只有在构造器、方法以及设定闭包时使用。
+			this的语义比较复杂。有时它指代全局对象（在大多时候），有时是对当前函数调用的范围，有时是DOM树中一个节点（当附带使用处理HTML的事件时），或者一些其他对象（当函数被call()或apply()调用时）
+		    因为使用这个很容易出错，在以下两个地方时必须限制使用的：
+		     1、构造器中
+		     2、对象的方法中（包括闭包）
+        for-in loop
+        	只有在某个对象/地图/散表进行遍历时
+        	for-in loop在进行数组循环时经常会出错。这是因为它不是从0循环至length-1而是循环当前对象和原型链的键值。下面有些使用for-in loop失败的例子：
+        	function printArray(arr) {
+			  for (var key in arr) {
+			    print(arr[key]);
+			  }
+			}
+
+			printArray([0,1,2,3]);  // This works.
+
+			var a = new Array(10);
+			printArray(a);  // This is wrong.
+
+			a = document.getElementsByTagName('*');
+			printArray(a);  // This is wrong.
+
+			a = [0,1,2,3];
+			a.buhu = 'wine';
+			printArray(a);  // This is wrong again.
+
+			a = new Array;
+			a[3] = 3;
+			printArray(a);  // This is wrong again.
+			遇到数组时通常使用普通循环
+			function printArray(arr) {
+			  var l = arr.length;
+			  for (var i = 0; i < l; i++) {
+			    print(arr[i]);
+			  }
+			}
+		Associative Arrays
+			不要用Array表示地图/散表/关联数组
+            不允许使用关联数组，更精确来说数组中不允许使用非数字的index。
+        Multiline string literals 
+        	不要这样使用：
+        		var myString = 'A rather long string of English text, an error message \
+                actually that just keeps going and going -- an error \
+                message to make the Energizer bunny blush (right through \
+                those Schwarzenegger shades)! Where was I? Oh yes, \
+                you\'ve got an error and all the extraneous whitespace is \
+                just gravy.  Have a nice day.';
+             编译的时候，每行开头的空白不能完全被分开，斜线后的空格会导致复杂的错误；虽然大多数脚本引擎支持这个，但是它依然不属于ECMAScript
+            最好连接字符串的方式：
+            var myString = 'A rather long string of English text, an error message ' +
+		    'actually that just keeps going and going -- an error ' +
+		    'message to make the Energizer bunny blush (right through ' +
+		    'those Schwarzenegger shades)! Where was I? Oh yes, ' +
+		    'you\'ve got an error and all the extraneous whitespace is ' +
+		    'just gravy.  Have a nice day.';
+    Array and Object literals  
+    	可以使用数组和对象直接量来代替数组和对象构造器
+    	数组构造器容易由于参数的问题而出错
+    	// Length is 3.
+		var a1 = new Array(x1, x2, x3);
+		
+		// Length is 2.
+		var a2 = new Array(x1, x2);
+		
+		// If x1 is a number and it is a natural number the length will be x1.
+		// If x1 is a number but not a natural number this will throw an exception.
+		// Otherwise the array will have one element with x1 as its value.
+		var a3 = new Array(x1);
+		
+		// Length is 0.
+		var a4 = new Array();
+		因此，如果在执行时只传递了一个参数而不是两个，数组将不能达到预期长度。
+		为了避免这些出错情况，通常会使用可读性更强的数组直接量。
+			var a = [x1, x2, x3];
+			var a2 = [x1, x2];
+			var a3 = [x1];
+			var a4 = [];
+	    对然对象构造器不会出现相似的问题，但是为了可读性和稳定性更强应该使用对象直接量，最好还是在字面上更清晰地指明.。
+	    var o = new Object();
+
+		var o2 = new Object();
+		o2.a = 0;
+		o2.b = 1;
+		o2.c = 2;
+		o2['strange key'] = 3;
+	正确的应该这样写：
+		
+		var o2 = {
+		  a: 0,
+		  b: 1,
+		  c: 2,
+		  'strange key': 3
+		};
+	Modifying prototypes of builtin objects
+		javascript中严格禁止修改例如内置对象的原型，内置数组的原型这类操作。修改其他内置对象的如函数的话程序的危险性就比较小，但是依然会导致难以调试程序的问题，所以尽量避免修改内置对象的原型。
+		
+	Internet Explorer's Conditional CommentsI （E下的条件注释）
+		不要这样使用	
+		var f = function () {
+		    /*@cc_on if (@_jscript) { return 2* @*/  3; /*@ } @*/
+		};
+		条件注释妨碍自动化工具的执行, 因为在运行时, 它们会改变 JavaScript 语法树.
+JavaScript Style Rules	
+	naming 命名
+		通常javascript的命名方式是这样的：函数名functionNames、变量名 variableNames、类名ClassNames、枚举名 EnumNames、方法名methodNames、常量名SYMBOLIC_CONSTANTS。
+		属性和方法
+			私有属性、变量和方法（文件或类中的）的命名应该以一个下划线开始。
+			受保护的属性、变量和方法应该和公有的类似没有下划线。
+		如果想了解更多有关私有和被保护的相关信息，请阅读	visibility部分。
+		方法和函数的参数
+			可选函数参数命名应该以opt开始。
+			函数参数不确定的时候其最后一个参数应该命名为var_args，虽然代码中这个var_args可能不会用到。应尽量使用参数数组。
+			可选和可变数量的函数参数也可以通过@param annotations（参数注释）指明。尽管其他的转换也是可以被编译器识别，最好两者都使用。 
+                   存取器
+           EcmaScript 5中不提倡使用属性的存取器。但是一旦使用的话取值器是不能够改变可见
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

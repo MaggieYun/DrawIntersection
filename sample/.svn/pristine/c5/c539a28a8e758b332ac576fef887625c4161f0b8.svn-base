@@ -1,0 +1,23 @@
+var options[];   
+        
+var onChangeHandler = function(){
+	var select = document.getElementById("option1");
+	var selectedItem = select.selectedIndex;
+
+	// clear options2
+	for(var i=0;i<options.length;i++){
+		var option2 = document.getElementById("option2");
+		option2.remove(options[i]);
+	}
+        
+       
+	for(var i=selectedItem+1;i<=19;i++){
+		// console.log("add option to select(option2):"+i);
+		var option2 = document.getElementById("option2");
+		var newOption = document.createElement("option");
+		newOption.value = i;
+		newOption.text = i;
+		options.push(newOption);            
+		option2.add(newOption);
+		}
+};

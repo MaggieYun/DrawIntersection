@@ -1,0 +1,29 @@
+package net.yhte.gis.zxy.cores;
+
+/**
+ * 
+ * @author 张小颖
+ * 
+ */
+public class Parameter {
+	/**
+	 * tile坐标最小X值
+	 */
+	public static int xmin;
+	/**
+	 * tile坐标最大X值
+	 */
+	public static int xmax;
+	/**
+	 * tile坐标最小y值
+	 */
+	public static int ymin;
+	/**
+	 * tile坐标最大y值
+	 */
+	public static int ymax;
+	/**
+	 * 层级
+	 */
+	public static int lev;
+}

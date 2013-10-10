@@ -1,0 +1,27 @@
+<html> 
+        <title>路口相位图</title>   
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+        <style type="text/css">
+        	#header {float:left;border: None;border-bottom: solid #000099 2px;}
+        	.toolbar {margin: 0;padding: 0;}
+        	.toolbar li {float:left; list-style-type:none;margin:0 5 0 5;}
+        </style>
+		<script type="text/javascript" src="libs/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="init.js"></script>
+    </head>
+    <body>
+        <div class="map">
+            <p>用户输入可选值：1,2,4,5,8,9,10,14,15;请注意相对路口车道数对称</p>
+            北路口：<input  type="text" id = "north" value="1,4,5" >
+            东路口：<input  type="text" id = "east" value="10,14,155">
+            南路口：<input  type="text" id = "south" value="8,9,10">
+            西路口：<input  type="text" id = "west" value="5,8,9"><br><br>
+            <button type="button" id ="show_img">提交</button>
+            <button type="button" id ="refresh">刷新</button><br><br><br>
+
+            <img id="basemap" src="" alt="路口相位图" >
+            <!-- <canvas id="map" width="955" height="600"></canvas> -->
+        </div>
+   </body>
+   
+</html>

@@ -1,0 +1,67 @@
+$(document).ready(function() {
+			/**
+			 * 页面加载时绘制路网
+			 */
+			var dataLoad = function(draw,lines,points,canvas) {
+				draw.drawLine(lines, canvas);
+				draw.drawtxt(points, canvas);
+			};
+
+			/**
+			 * 寻路
+			 */
+			var findRoute = function(event) {
+				var routeEngine = new RouteEngine(netWork);
+				routeEngine.doS(event.data.draw,event.data.canvas);
+			};
+			/**
+			 * 刷新
+			 */
+			var refresh = function(event) {
+                extent=[[13426192.883026948,3671416.5248470777],[13430755.218152719,3674282.9134077714]];
+                scale=955 / (extent[1][0] - extent[0][0]);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				dataLoad(event.data.draw,event.data.lines,event.data.points,event.data.canvas);
+			};
+            /*var navitation=function(event){
+                var navitation=new Navigation(event.data.ctx,event.data.scale,
+                                              event.data.extent,event.data.points,event.data.segments);
+                
+                $("#map").bind("mousedown",navitation.cnvs_mouseDown);
+	            $("#map").bind("mousemove",navitation.cnvs_mouseMove);
+	            $("#map").bind("mouseup",navitation.cnvs_mouseUp);
+            };*/
+            var rect;
+            var start = false;
+            extent=[[13426192.883026948,3671416.5248470777],[13430755.218152719,3674282.9134077714]];
+            scale=955 / (extent[1][0] - extent[0][0]);
+
+			// 获取绘图上下文
+			var canvas = document.getElementById('map');
+			var ctx = canvas.getContext('2d');
+			var netWork = new NetWork(roads);
+			netWork.build();
+			var draw = new Draw(ctx,extent,scale);
+
+			var points = netWork.getPoints();
+			var pointArr = draw.pointsConvert(points);
+
+			var segments = netWork.getSegments();
+			var lines = draw.getLinePs(segments);
+
+			console.log(segments.length + " " + "路段");
+			console.log(points.length + " " + "节点");
+            
+                        
+            // 加载数据
+            dataLoad(draw,lines,pointArr,ctx);   
+           
+            var navitation=new Navigation(ctx,points,segments);
+            //$("#zoomIn").bind("click",{activate:1,canavs:ctx,scale:scale,extent:extent,points:points,segments:segments},navitation);
+            $("#findRoute").bind("click",{canvas:ctx,draw:draw},findRoute);
+            $("#refresh").bind("click",{draw:draw,lines:lines,points:pointArr,canvas:ctx},refresh);
+            $("#map").bind("mousedown",navitation.cnvs_mouseDown);
+            $("#map").bind("mousemove",navitation.cnvs_mouseMove);
+            $("#map").bind("mouseup",navitation.cnvs_mouseUp);
+		});
+

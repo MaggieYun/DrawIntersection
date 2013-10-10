@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>A Star Route Analysis</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<style>
+	#map{
+		border:solid #cccccc 1px;
+	}
+	</style>
+	<script type="text/javascript" src="road.js"></script>
+</head>
+<body>
+	<canvas id="map" width="955" height="600"></canvas>
+	<br />
+	<input type="button" value="生成路径" onclick="displayRoads();" />
+	起点:<input type="text" id="startNode" ></input>
+	终点:<input type="text" id="endNode"></input>
+	<input type="button" value="寻路" onclick="displayBestRoute();"></input>
+	<input type="button" value="刷新" onclick="refresh();"></input>
+	<p>黑色线表示双行线，红色表示单行线，青色代表找到的路径</p>
+	<p>生成路径按钮用来生成路网数据，寻路按钮用来寻路，刷新用来清除找到的路径和文本框内容</p>
+	<p>通过输入起点和终点，选择寻路按钮来生成找到的路径</p>
+</body>		
+	<script type="text/javascript" src="Route.js"></script>
+	<script type="text/javascript">
+		document.getElementById("startNode").value = "";
+		document.getElementById("endNode").value = "";
+		var network=new NetWork(roads);		
+		network.build();		
+		var points=network.getPoints();
+		var segments=network.getSegments();		
+		//console.log(points.length);
+		//console.log(segments.length);
+		//console.log(points[0].getX());
+	</script>
+	<script type="text/javascript" src="display.js"></script>
+	<script type="text/javascript" src="AStar.js"></script>
+	<script type="text/javascript">
+		var screenSegments=coordinateConvertSegments(segments);
+		var screenPoints=coordinateConvertPoints(points);
+		//console.log("startValue");
+		//console.log("endValue");		
+		//var startValue=document.getElementById("startNode").value;		
+		//var endValue=document.getElementById("endNode").value;
+		//var start=screenPoints[startValue]; //起点
+		//var end=screenPoints[endValue];  //终点
+		//console.log("start:"+start.getX()+","+start.getY());
+		//console.log("end:"+end.getX()+","+end.getY());
+		//aStar(screenPoints,screenSegments,start,end);
+		//console.log(screenPoints[0].getX());
+		//aStar(screenPoints,screenSegments);
+		//console.log(process.length);				
+	</script>	
+	
+</html>

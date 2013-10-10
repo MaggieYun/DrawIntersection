@@ -1,0 +1,112 @@
+/**
+ * GeoSetup坐标设置单例类
+ * @class
+ * @author zhangxiaoying
+ */
+var GeoSetup=(function(){
+    /**
+    *私有静态变量
+    *存储所有地理坐标
+    */
+    var store = {
+        "WX":[13374569.936977958,3698392.1754720984,13410953.962441692,3715361.1957514035],
+        "NTTZ":[13460179.936734661,3763368.7399402414,13496563.962198395,3780337.7602195465],
+        "HNWC":[12317368.203889633,2209898.800370648,12353752.229353366,2226867.820649953],
+        "SZ":[13414558.649936024, 3664736.0443162513, 13440031.289612025, 3676201.598559012],
+        "HNBS":[12183009.183041872,2180851.170286126,12185283.184633357,2181911.7340535824],
+        "ZJ":[13278719.174298197,3779552.7302836897,13315103.19976193,3796521.7505629947]
+    };
+    /**
+    *私有静态变量
+    *地区
+    */
+    var locate;
+    var a = 20037508.34;
+    /**
+    *私有静态变量
+    *地理范围坐标
+    */
+    var extent=null;
+    var center=null;
+    
+    return{
+        
+        /**
+        *设定地区
+        @param {String} value 地区名
+        *默认值为“SZ”
+        */
+        setLocation:function(value){
+            locate = value||"SZ";
+            extent=store[locate];
+            center=[0.5*(extent[0]+extent[2]),0.5*(extent[1]+extent[3])];
+        },
+        /**
+        *获得范围
+        *@param {Boolean} bool 可选参数 是否为地理坐标
+        *如果未定义或为true 视为地理坐标
+        *@return {Array} extent 地理范围
+        */
+        getExtent:function(opt_bool){
+            //需要投影坐标时
+            if(opt_bool===false){
+                //地理坐标转换为投影坐标
+                var a=this.toLL(extent[0],extent[1]);
+                var b=this.toLL(extent[2],extent[3]);
+                extent=[a.x,a.y,b.x,b.y];
+                center=[0.5*(extent[0]+extent[2]),0.5*(extent[1]+extent[3])];
+            }
+            return extent;
+        },
+        /**
+        *获得中心点
+        *@param {Boolean} boole 可选参数 是否为地理坐标
+        *如果为true 或未定义视为地理坐标
+        *@return {Array} center 中心点坐标
+        */
+        getCenter:function(opt_bool){
+            if(opt_bool===false){
+                this.getExtent(opt_bool);
+            }
+            return center;
+        },
+        /**
+         * 地理坐标转投影坐标
+         * @param {Number} x 经度 
+         * @param {Number} y 纬度
+         * @return {Object} 投影坐标
+         */
+        toMC:function(x,y){
+            return {
+                x:x*a/180,
+                y:Math.log(Math.tan((90 + y) * Math.PI/ 360))/(Math.PI/180)*a/180
+            };
+        },
+        /**
+         * 投影坐标转地理坐标
+         * @param {Number} x 经度 
+         * @param {Number} y 纬度
+         * @return {Object} 地理坐标
+         */
+        toLL:function(x,y){
+            x = x/a * 180;
+            y = y/a * 180;
+            y = 180/Math.PI * (2 * Math.atan(Math.exp(y * Math.PI/180))-Math.PI/2);
+            return {
+                x:x,
+                y:y
+            };
+        }
+    };
+})();
+GeoSetup.setLocation("WX");//设置区域为无锡
+var a=GeoSetup.getExtent();//获取范围
+var b=GeoSetup.getCenter();//获取中心
+GeoSetup.setLocation("SZ");//设置区域为SZ
+var c = GeoSetup.getExtent();//获取范围
+var d=GeoSetup.getCenter();//获取中心
+
+console.log(a);
+console.log(b);
+console.log(c);
+console.log(d);

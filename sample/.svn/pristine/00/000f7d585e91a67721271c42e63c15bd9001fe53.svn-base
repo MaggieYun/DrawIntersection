@@ -1,0 +1,122 @@
+	/**
+	 * @class 点对象
+	 */
+var Point = function(x, y) {
+
+	/**
+	 * 节点x坐标
+	 */
+	var _x;
+   
+	this.setX = function(value) {
+		_x = value;
+		return this;
+	};
+
+	this.getX = function() {
+		return _x;
+	};
+	 this.setX(x);
+	 
+	/**
+	 * 节点y坐标
+	 */
+	var _y;
+
+	this.setY = function(value) {
+		_y = value;
+		return this;
+	};
+
+	this.getY = function() {
+		return _y;
+	};
+	this.setY(y);
+	
+	/**
+	 * 节点id
+	 */
+	var _id;
+
+	this.getId = function() {
+		if (_id) {
+			return _id;
+		}
+		if (Point.count === undefined) {
+			Point.count = 0;
+		} else {
+			Point.count++;
+		}
+		_id = Point.count;
+		return _id;
+	};
+
+	/**
+	 * 节点g值
+	 */
+	var _g = 0;
+
+	this.getG = function() {
+		if(!g){
+			_g = _parent.getG() + this.distance(_parent);
+		}
+		return _g;
+	};
+
+	/**
+	 * 节点h值
+	 */
+	var _h;
+
+	this.getH = function() {
+		if (!_h) {
+			_h = this.distance(Point.endPoint);
+		}
+		return _h;
+	};
+	
+	/**
+	 * 节点f值
+	 */
+	var _f;
+
+	this.getF = function() {
+		if (!_f) {
+			_f = this.g + this.h;
+		}
+		return _f;
+	};
+	
+	/**
+	 * 节点父元素
+	 */
+	var _parent;
+
+	this.setParent = function(parent) {
+		_parent = parent;
+		_g = _parent.getG() + this.distance(_parent);
+	};
+
+	this.getParent = function() {
+		return _parent;
+	};
+	
+	/**
+	 * 该节点与另一个节点的距离
+	 */
+	this.distance = function(point) {
+		Math.sqrt(Math.pow(_x - point.x) + Math.pow(_y - point.y));
+	};
+	
+	/**
+	 * 连通点
+	 */
+	var _nearPs=[];
+	this.set_nearPs=function(nearP){
+		_nearPs.push(nearP);
+		return this;
+	};
+	this.get_nearPs=function(){
+		return _nearPs;
+	};
+};

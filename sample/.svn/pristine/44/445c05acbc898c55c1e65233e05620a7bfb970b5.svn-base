@@ -1,0 +1,196 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+
+
+/**
+ * @author 许照云
+ *
+ */
+public class Settings implements ISettings {
+
+	private String path;
+	static String separate = "=";
+	
+	/**
+	 * @param path
+	 */
+	public Settings(String path){
+		this.path = path;
+		File file = new File(path);
+		if(!file.exists()){
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private HashMap<String, String> readConfig(String file){
+		BufferedReader buffer = null;
+		HashMap<String, String> store=new HashMap<String, String>();
+		try {
+			buffer = new BufferedReader(new FileReader(file));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+        String line;
+        try {
+			while( (line = buffer.readLine()) != null){
+				String[] temp=line.split(Settings.separate);
+				store.put(temp[0], temp[1]);
+			}
+			buffer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return store;
+	}
+	
+	
+	
+	
+	private void writeConfig(String file,String key,String value){
+		BufferedWriter bw = null;
+		try {
+			bw= new BufferedWriter(new FileWriter(file,true));//true表示不覆盖原本文本中的内容
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			try {
+				bw.newLine();//自动换行
+				bw.write(key+"=="+value);
+				bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	
+	public String get(String args){
+		// TODO Auto-generated method stub
+		HashMap<String, String> configuration = readConfig(this.path);
+		String configDetail = (String) configuration.get(args);
+		return configDetail;
+	}	
+	
+
+	@Override
+	public void set(String key, String value) {
+		// TODO Auto-generated method stub
+		set(key,value,null);
+	}
+
+	@Override
+	public void set(String key, String value, String desc) {
+		// TODO Auto-generated method stub
+		if(desc == null){
+			writeConfig(this.path,key,value);
+		}else{	
+			writeConfig(this.path,"#",desc);
+			writeConfig(this.path,key,value);
+		}
+	}
+
+	public void set(String key, String value, String desc,Boolean flag) {	
+		//if(get(key)!=null)	在内部调用类的方法？？？
+		HashMap<String, String> configuration = readConfig(this.path);
+		if(configuration.containsKey(key)){
+			if(flag=true){ //当配置文本中已有set要设置的值，并且flag=true，即要求替换原配置参数时
+				BufferedWriter bw = null;
+				try {
+					bw= new BufferedWriter(new FileWriter(this.path,false));
+					bw.write("");
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				configuration.remove(key);//删除从配置文件中读取的原有的参数值
+				configuration.put(key, value);//增加
+				Iterator<String> iter=configuration.keySet().iterator();
+				writeConfig(this.path,"#",desc);
+				while(iter.hasNext()){//遍历hashmap中的值						
+					String k = iter.next(); 
+					String val = configuration.get(k); 
+					writeConfig(this.path,k,val);
+				}
+			}			
+		}else {//即配置文件中不包含现set要设置的参数，则添加
+			writeConfig(this.path,"#",desc);
+			writeConfig(this.path,key,value);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+//		String para="#"+desc+"\r\n"+key+"="+value;
+//		String configuration[] = readconfig(this.path);
+//		int i=0;
+//		//为什么用在这里的时候，readconfig会循环读取文本中的内容，直到超出数组范围溢出？？？
+//		if(flag=false){//直接忽视set的数值，保持原本配置文件中的原始值不变
+//			for(i=0;i<=paranum;i++){
+//				if(configuration[i].startsWith(key)){
+//					break;
+//				}				
+//			}
+//			if(i==(paranum+1)){//原始配置文件中不包含新设置的参数，则添加
+//				writeconfig(this.path,para);	
+//			}	
+//		}else if(flag=true){//如果flag为true，则用set设置的值替换原始值
+//			for(i=0;i<=paranum;i++){
+//				if(configuration[i].startsWith(key)){
+//					configuration[i]=para;
+//					break;
+//				}
+//			}	
+//			if(i==paranum+1){
+//				writeconfig(this.path,para);
+//				//如何简便的清空文本中的内容
+//				//现有一个问题，将数组其他部分复制
+//			}else{
+//					BufferedWriter bw = null;
+//					try {
+//						bw= new BufferedWriter(new FileWriter(this.path,false));
+//						bw.write("");
+//						bw.close();
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					
+//					for(int j=0;j<=paranum;j++){
+//						writeconfig(this.path,configuration[j]);
+//				}
+//			}
+//				
+//		}
+	}	
+		
+	}
+	
+
+	
+	//public static void main(String[] args){
+		
+	//	Settings settings = new Settings("c:/ll.config");
+	//	settings.get("attr");
+	//}
+

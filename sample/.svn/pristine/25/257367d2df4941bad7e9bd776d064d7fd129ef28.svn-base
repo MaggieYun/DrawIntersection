@@ -1,0 +1,28 @@
+<meta charSet="utf-8">
+<style>
+#map {
+	border: solid #cccccc 1px;
+}
+</style>
+<body onload="dataLoad()">
+	<canvas id="map" width="955" height="600"></canvas>
+	<br />
+	<input type="text" id="startNode"></input>
+	<input type="text" id="endNode"></input>
+	<input type="button" value="寻路" onclick="tryOn();"></input>
+	<input type="button" value="刷新" onclick="refesh();"></input>
+	<p>在文本框内输入起始点，点击寻路按钮,刷新可擦除已寻得得路径</p>
+</body>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="tools.js"></script>
+<script type="text/javascript" src="draw.js"></script>
+<script type="text/javascript" src="road.js"></script>
+<script type="text/javascript" src="http://172.16.60.32/route/road.js"></script>
+<script type="text/javascript" src="Segment.js"></script>
+<script type="text/javascript" src="NetWork.js"></script>
+<script type="text/javascript" src="Point.js"></script>
+<script type="text/javascript" src="test.js"></script>
+<script type="text/javascript" src="RouteEngine.js"></script>
+<script type="text/javascript" >
+	
+</script>

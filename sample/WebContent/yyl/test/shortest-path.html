@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+<!--flash地图控件API-->
+<script type="text/javascript" src="flashmap_all.js"></script>
+<!--程序入口-->
+<script type="text/javascript" src="init.js"></script>
+</head>
+<body>
+	<div id="flashContent"></div>
+	<input type="button" value="zoomin" onclick="zoomin();" />
+	<input type="button" value="zoomout" onclick="zoomout();" />
+	<input type="button" value="pan" onclick="pan();" />
+	<input type="button" value="next" onclick="next();" />
+	<input type="button" value="prev" onclick="prev();" />
+	<input type="button" value="reset" onclick="reset();" />	
+	<input type="button" value="mappoint" onclick="drawMapPoint();" />	
+	<input type="button" value="polygon" onclick="drawPolygon()" />
+	<input type="button" value="circle" onclick="drawCircle()" />
+	<input type="button" value="clear" onclick="layerClear()" /><br />
+	<button type="button" onclick="doubleLines()">Double Lines</button>
+	<button type="button" onclick="singleDirection()">Single Direction</button>
+	<button type="button" onclick="breakLines()">Break Lines</button>
+	<!-- <button type="button" onclick="labelVertex()">Label Vertex</button> -->
+	<br />	
+	起点：<input id="startNode" type="text" />
+	终点：<input id="endNode" type="text" />		
+	<input type="button" onclick="bestWay();" value="Best Way" />	
+</body> 
+</html>

@@ -1,0 +1,15 @@
+
+$(function() {
+    var btnChange = $("#startdown");
+	var divBar = $(".progress");
+	btnChange.bind("click",showProgress(m));
+	
+	function showProgress(m){
+		var w = divBar.width();//获取div当前宽度
+		var n=Float.parseFloat(m);
+		if(w <= 50){
+			divBar.width(n*50);
+		}
+	};
+});
+

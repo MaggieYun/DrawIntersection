@@ -1,0 +1,16 @@
+package net.yhte.gis.xzyun.api;
+
+/**
+ * @author 许照云
+ *
+ */
+public class MapSize{
+/**
+	 * 
+	 * @param levelOfDetail 地图放大的等级范围
+	 * @return 256*2^等级范围
+	 */
+	public static int mapsize(int levelOfDetail) {
+		return 256 << levelOfDetail;
+	}
+}

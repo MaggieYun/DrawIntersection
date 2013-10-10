@@ -1,0 +1,374 @@
+#coding=UTF-8
+import urllib
+import json
+import tornado.ioloop
+import tornado.web
+import os, cStringIO
+import Image, ImageDraw
+import copy
+
+class convert:
+	@classmethod   
+	def get_roads(cls, roadurl):
+		"""
+		获取存在url地址上的道路数据，js形式转化为python可以
+		处理的数组形式（字典组成的数组）
+		"""
+		js = open(roadurl).read()           #从本地文件夹中读取现成的路网数据
+		# js=urllib.urlopen(roadurl).read()  #从网页读取现成的路网数据
+		js = js.replace("var roads =", "")
+		js = js.replace(";", "")
+		roads = json.loads(js)
+		# print roads[0]["G"]["polyline"][0]
+		return roads
+
+	@classmethod   
+	def gemtry_to_screen(cls, Vertex):
+		"""
+		首先将点位的地理坐标从roads字典数组中取出
+		将地理坐标转化为屏幕坐标
+		"""		
+		xmin = 13426192.883026948   #地理坐标基本数据
+		ymin = 3671416.5248470777
+		xmax = 13430755.218152719
+		ymax = 3674282.9134077714 
+		gh = ymax - ymin           
+		gw = xmax - xmin
+		scaley = 550 / gh             #求比例尺
+		scalex = 955 / gw
+		ptscrx = int(scalex * (Vertex.x - xmin))
+		ptscry = int(scaley * (ymax - Vertex.y))
+		return [ptscrx, ptscry]
+
+	@classmethod 
+	def screen_to_gemtry(cls, ptscr):
+		pass
+
+
+
+#点类		
+class Vertex:
+	def __init__(self, vx, vy):
+		self.x = vx
+		self.y = vy
+		self.segments = []   #包含该节点的路段
+		self.parent = None
+		self.neighborpoint = []
+		self.g = 0
+
+	def set_parent(self, nowpoint):   #   设置父节点,每次g值与父节点直接相关
+		self.parent = nowpoint
+		if(self.parent == None):
+			self.g = 0
+		else:	
+			self.g = self.parent.g + self.get_distance(self.parent)
+
+	def get_h(self, end):
+		self.h = self.get_distance(end)
+
+	def get_f(self):
+		self.f = self.g + self.h
+		
+	def get_neighborpoint(self):      #     返回的都是可通过的节点对象（未设置单向，双向）    
+		for x in self.segments:
+			y = x.getopsitevtx(self)
+			self.neighborpoint.append(y)
+
+					
+
+
+	
+	def get_x(self):
+		return self.x
+
+	def get_y(self):
+		return self.y	
+
+	def ifclose(self, othervtx, value):
+		if(value > 0):
+			buffdistance = value
+		else:
+			buffdistance = 0
+		if(self.get_distance(othervtx) <= buffdistance):
+			return True
+		else:
+			return False	
+
+	def get_distance(self, othervtx):
+		"""
+		计算两点之间的距离
+		"""
+		xdis = (self.get_x() - othervtx.get_x()) ** 2;    #这种方法是否不妥，两个点的实例对象（点对象内涉及另一个实例对象）
+		ydis = (self.get_y() - othervtx.get_y()) ** 2;
+		return (xdis + ydis) ** 0.5
+
+	def ifequal(self, othervtx):
+		if(self.get_x() == othervtx.get_x() and self.get_y() == othervtx.get_y()):
+			return True
+		else:
+			return False	
+
+	def  addSegment(self, segment):
+		self.segments.append(segment)
+
+
+
+class Segment:	
+	def __init__(self, start, end):
+		self.start = start   
+		self.end = end
+		self.attributes = None
+
+	def setAttributes(self, value):
+		self.attributes = value
+
+	def getAttributes(self):
+		return self.attributes
+
+	def getopsitevtx(self, vtx):
+		if(vtx.ifequal(self.start)):
+			return self.end
+		else:
+			return self.start	
+			
+
+class Network():
+	def __init__(self, roads):
+		self.vertex = []   #包含的节点的索引
+		self.segments = []
+		self.roads = roads
+
+	def parse(self):
+		"""
+		获取路网的各项数据信息
+		"""
+		for x in self.roads:
+			road = x                             #获取某条路
+			paths = road["G"]["polyline"]        #获取某条路的各个路段
+			attributes = road["A"]               #获取某条路的属性
+			for y in paths:                    #遍历路的各个分支
+				path = y
+				for i in range(len(path) - 1):   #获取路径上相邻两节点
+					first = path[i]
+					second = path[i + 1]
+					firstvertex = Vertex(first[0], first[1])
+					secondvetex = Vertex(second[0], second[1])
+
+					firstvertex = self.addvtx_to_network(firstvertex)   #将节点添加进network
+					secondvetex = self.addvtx_to_network(secondvetex);
+
+					segment = Segment(firstvertex, secondvetex)
+					segment.setAttributes(attributes)
+
+					self.add_segments(segment)
+
+					firstvertex.addSegment(segment)
+					secondvetex.addSegment(segment)
+
+
+	def add_segments(self, segment):
+		self.segments.append(segment)
+
+	def checkifpointexist(self, othervtx):
+		vertex_size = len(self.vertex)   #网络数据（network）中已经存在的节点的数目
+		for x in self.vertex:
+			if(x.ifclose(othervtx, 5)):  #如果两点靠近(距离小于5)，返回这个点本身
+				return x
+		return False	                #默认点尚不存在于network的节点中	
+
+	def addvtx_to_network(self, othervtx): 
+		"""
+		将点添加至network
+		"""
+		vertex_size = len(self.vertex)
+		if(vertex_size == 0):               #第一个点
+			self.vertex.append(othervtx)
+			return othervtx
+		else:
+			for x in self.vertex:
+				exist = self.checkifpointexist(othervtx)
+				if(exist):
+					return exist
+				else:
+					self.vertex.append(othervtx)
+					return othervtx		
+
+
+class route:
+	"""
+	寻路
+	"""
+	def find_best_path(self, start_id, end_id, vertexs):
+		openlist = []
+		closelist = []
+		path = []	
+		nowpoint = None
+
+		start = vertexs[start_id]
+		end = vertexs[end_id]
+		openlist.append(start)
+		start.parent = None  #每次先把起始节点的父节点设为空
+
+		for x in vertexs:
+			x.get_neighborpoint()
+
+		flag = True
+		while flag:
+			nowpoint = self.get_nowpoint(openlist, end)
+			closelist.append(nowpoint)
+			openlist.remove(nowpoint)
+			# nowpoint.get_neighborpoint(pointsclass)
+
+			for x in nowpoint.neighborpoint:
+				# x.get_neighborpoint(pointsclass)
+				if ((x in closelist) or(len(x.neighborpoint) == 1)):
+					continue
+				elif(not(x in openlist)):
+					openlist.append(x)
+					x.set_parent(nowpoint)
+					x.get_h(end)
+					x.get_f()
+				elif(x in openlist):
+					temp_g = x.get_distance(nowpoint)
+					if((nowpoint.g + temp_g) < x.g):
+						x.set_parent(nowpoint)
+						x.get_h(end)  #尚未仔细考虑，这两句代码是否有必要
+						x.get_f()
+					else:
+						continue
+			if((end in closelist) or (len(openlist) == 0)):
+				flag = False		
+					
+		if(end in closelist):
+			path = self.loop_parents(end)
+		return path
+		# return closelist
+
+	def loop_parents(self, end):
+		path = []
+		path.append(end)
+		while(path[-1].parent is not None):
+			path.append(path[-1].parent)	
+		return path
+		
+
+	def get_nowpoint(self, openlist, end):
+		"""
+		@param end 终点
+		@return 找出开启列表中f值最小的节点，作为当前节点
+		"""
+		minlen = 1000000000000
+		nowpoint = None
+		for x in openlist:
+			x.get_h(end)
+			x.get_f()
+			if(x.f < minlen):
+				minlen = x.f
+				nowpoint = x					
+		return nowpoint
+
+
+
+_vertexs, _segments = None, None   #全局变量，供两个handler调用
+def initial():
+	"""
+	计算得到vertexs,segments
+	"""
+	global _vertexs, _segments  # 调用全局变量
+
+	if _vertexs is not None:
+		return
+
+	# roadurl="http://172.16.60.32/route/road.js"      
+	# roadurl=r"f:\xunlu\resources\javascript\road.js"
+	path = os.path.dirname(__file__)
+	roadurl = os.path.join(path, r"resources\javascript\road.js")
+	print "roadurl:", roadurl
+	roads = convert.get_roads(roadurl)    #调用类的方法，不用实例化（convert()），即静态类
+	network = Network(roads)     #实例化
+	network.parse()
+	_vertexs = network.vertex
+	_segments = network.segments
+	
+	
+class drawRoads():	
+	def draw_basemap(self):
+		"""
+		绘制地图
+		"""	
+		initial()
+		im = Image.new("RGBA", (955, 600), "#f4f3ef")
+		draw = ImageDraw.Draw(im)
+
+		for x in _vertexs:
+			ptcoord = convert.gemtry_to_screen(x)
+			draw.arc(((ptcoord[0] - 2), (ptcoord[1] - 2), (ptcoord[0] + 2), (ptcoord[1] + 2)), 0, 360, fill=(0, 0, 0))
+		for z in _segments:
+			startpoint = convert.gemtry_to_screen(z.start)   #gemtry_to_sreen()方法返回的是数组形式，绘制图片draw方法要用元组
+			endpoint = convert.gemtry_to_screen(z.end)
+			draw.line(((startpoint[0], startpoint[1]), (endpoint[0], endpoint[1])), fill=(0, 0, 0))
+		# del draw
+		return im
+	
+	def drawBesPath(self,start_id,end_id):
+		"""
+		在地图上绘制最优路径
+		"""
+		initial()
+		impath=drawRoads().draw_basemap()
+		draw = ImageDraw.Draw(impath)
+		path = route().find_best_path(start_id, end_id, _vertexs)
+
+		bestpath = []
+		for x in path:
+			ptcoord = convert.gemtry_to_screen(x)
+			bestpath.append(ptcoord)
+
+		for i in range(len(bestpath) - 1):
+			draw.line(((bestpath[i][0], bestpath[i][1]), (bestpath[i + 1][0], bestpath[i + 1][1])), fill=(255, 0, 0))
+		
+		return impath
+				
+		
+class MainHandler(tornado.web.RequestHandler):
+	def get(self):
+		io = cStringIO.StringIO()  
+		im=drawRoads().draw_basemap()
+		im.save(r"G:\xunlu\roads.png", "png")  #将生成的路网保存一份在本地以便查看
+		im.save(io, "PNG")
+		self.set_header("Content-Type", "image/png")
+		self.write(io.getvalue())
+		
+	post = get
+
+
+class pathHandler(tornado.web.RequestHandler):
+	def get(self):
+		startid_str = self.get_argument("startid")  #从页面获取寻路的起点和终点的索引
+		endid_str = self.get_argument("endid")
+		start_id = int(json.loads(startid_str)) #转换已知数据
+		end_id = int(json.loads(endid_str))
+		
+		impath=drawRoads().drawBesPath(start_id,end_id)
+		
+		io = cStringIO.StringIO()
+		impath.save(r"G:\xunlu\bestpath.png", "png")
+		impath.save(io, "PNG")
+		
+		self.set_header("Content-Type", "image/png")
+		self.write(io.getvalue())
+		# self.write(best)
+
+	post = get		
+
+
+application = tornado.web.Application([
+	(r"/road", MainHandler),
+	(r"/bestpath", pathHandler),
+	(r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.dirname(__file__)}),
+])	
+
+
+if __name__ == '__main__':
+	application.listen(8888)
+	tornado.ioloop.IOLoop.instance().start()

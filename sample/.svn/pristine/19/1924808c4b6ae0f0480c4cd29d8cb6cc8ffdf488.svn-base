@@ -1,0 +1,110 @@
+body {
+    height:900px;
+    color: #777676;
+    font: 14px Arial;
+    margin: 0;
+    padding: 0;
+    width:100%;
+}
+#header,#else,#downloadmission,#map,#set,#footer{
+    box-shadow:1px 2px 3px #CCCCCC;
+    border-style:solid;
+    border-width:1px;
+    border-color:#DDDDDD;
+}
+#header{
+    height:100px;
+    width: 1000px;
+    margin:auto;
+}
+#header_box{
+    height:90px;
+    margin:0 auto;
+    width:950px;
+   
+}
+#logo{
+    height:66px;
+    width: 250px;
+    margin-left: 10px;
+    padding: 10px 0 0 5px;
+}
+#weather {
+    height: 66px;
+    padding: 10px 0 0 5px;
+    overflow: hidden;
+    width: 320px;
+}
+#user {
+    height: 66px;
+    margin-right: 10px;
+    overflow: hidden;
+    padding: 10px 0 0 5px;
+    width: 290px;
+}
+
+#work {
+    height:600px;
+    position: relative;
+    width:1000px;
+    margin:auto;
+ 
+}
+#downloadmission{
+    height:300px;
+    width: 150px;
+}
+#mission{
+    margin:0;
+    padding:0;
+}
+#else{
+    height:280px;
+    width: 150px;
+    margin-top:10;
+    
+ }
+#map{
+    height:590px;
+    position: relative;
+    width: 630px;
+    margin:0 0 0 5px
+}
+#set{
+    height:590px;
+    position: relative;
+    width: 200px;
+}
+
+#footer {
+    height:80px;
+    font-size: 10px;
+    position: relative;
+    width: 1000px;
+    margin:auto;
+   
+}
+h3{
+    color:rgb(255,255,255);
+    margin:0px 0px 0pt;
+    padding:0pt 10px;
+    border:medium none;
+    height:30px;
+    line-height:30px;
+    //background:url("resources/images/bcc.png") repeat 0% 0% transparent;
+    border-radius: 5px 5px 0px 0px;
+ 
+}
+
+.float_right {
+    float: right;
+}
+.float_left{
+   float:left;
+}
+.border-image{
+    border-image:url(a.png) 25% 25% 25% 25% round round;
+}
+
+
+

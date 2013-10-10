@@ -1,0 +1,18 @@
+package net.yhte.gis.xzyun.tilesystem;
+
+/**
+ * 
+ * @author 许照云
+ * 
+ */
+public class Pixel {
+	/**
+	 * x:横坐标（经度）
+	 */
+	public int x;
+	/**
+	 * y:纵坐标（纬度）
+	 * 
+	 */
+	public int y;
+}

@@ -1,0 +1,142 @@
+div{
+    border:solid 1px #cccccc;margin:5px;width:1000px;
+}
+
+body div{
+    margin: 5px auto;height:100%; font: 12px Verdana,Arial,Helvetica,sans-serif;
+}
+#bmap{
+    width:612px;height:480px;border:1px solid gray;
+}
+
+#yhits{
+    width:198px;height:98px;margin:1px
+}
+
+#exit,#relogin{
+    float:right;
+}
+
+#downset{
+    margin-top:5px;margin-left:30px;
+}
+
+#frmset{
+    margin-top:10px;
+}
+
+.header div{
+    margin: 0px;border:solid 0px;float:left;
+}
+
+.middle div{
+    margin: 0px;border:solid 0px;float:left;
+}
+
+.footer{
+    height:30px;
+}
+
+.middle{
+    height:560px;
+}
+
+.header{
+    height:100px;
+}
+
+.imgbox{
+    width:200px;
+}
+
+.logo{
+    width:600px;
+}
+
+.welcome{
+    width:198px;
+}
+
+.middle-left{
+    width:200px;
+}
+
+.download{
+    height:39px;width:200px;
+}
+
+.downloadset{
+    height:520px
+}
+
+.mapbox{
+    width:654px;
+}
+
+.box1{
+    width:20px;
+}
+
+.box2{
+    width:634px
+}
+
+.middle-right{
+    width:140px;
+}
+
+.document{
+    height:39px;width:144px;  
+}
+
+.declare{
+    height:520px;width:145px;
+}
+
+.footer,.middle,.header{
+    background-color:#FF9999;
+}
+
+.imgbox,.middle-left{
+    border-right:solid 1px #cccccc !important;
+}
+
+.welcome,.middle-right{
+    border-left:solid 1px #cccccc !important;
+}
+
+.download,.document{
+    border-bottom:solid 1px #cccccc !important;font-family: sans-serif;
+    font-weight:bold;background-color:#FAEBD7;
+}
+
+.progress{
+    width: 20px;height: 20px;background-color: #00ff00;
+}
+
+#msg{
+    color: #ff0000;
+}
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

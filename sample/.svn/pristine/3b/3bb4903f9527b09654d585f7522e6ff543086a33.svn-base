@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>jqMap</title>
+        <meta charset="utf-8" />
+        <style type="text/css">
+            div{border:solid #cccccc 1px;}
+        </style>
+        <script type="text/javascript" src="jquery-1.8.0.min.js"></script>
+        <script type="text/javascript" src="events/ExtentEvent.js"></script>
+        <script type="text/javascript" src="events/MapClickEvent.js"></script>
+        <script type="text/javascript" src="tools/NavigationTool.js"></script>
+        <script type="text/javascript" src="jqMap2.js"></script>
+        <script type="text/javascript" src="routeResult.js"></script>
+        <script type="text/javascript" src="Point.js"></script>
+        <script type="text/javascript" src="Segment.js"></script>
+        <script type="text/javascript" src="tools.js"></script>
+        <script type="text/javascript" src="Convert.js"></script>
+        <script type="text/javascript" src="Draw.js"></script>
+        <script type="text/javascript" src="http://172.16.60.32/route/road.js"></script> 
+        <script type="text/javascript" src="NetWork.js"></script>
+        <script type="text/javascript" src="RouteEngine.js"></script>
+        <script type="text/javascript" src="resultSegmt.js"></script>
+         
+    </head>
+    <body>
+        <div id="map" ></div>
+        <input type="button" id="oneLevelIn" value="放大一级"></input>
+        <input type="button" id="oneLevelOut" value="缩小一级"></input>
+        <input type="button" id="left" value="左移"></input>
+        <input type="button" id="right" value="右移"></input>
+        <input type="button" id="up" value="上移"></input>
+        <input type="button" id="down" value="下移"></input>
+        <br>
+        <input type="button" id="zoomIn" value="拉框放大"></input>
+        <input type="button" id="zoomOut" value="拉框缩小"></input>
+        <input type="button" id="pan" value="漫游"></input>
+        <br>
+        <input type="button" id="preView" value="前一视图"></input>
+        <input type="button" id="nextView" value="后一视图"></input> 
+        <input type="button" id="reSet" value="重置"></input> 
+
+     
+        <br>
+        <input type="button" value="寻路" id="findRoute"></input>
+        <input type="button" value="添加障碍点" id="addForbidenPoint"></input>
+        <input type="button" id="clear" value="清除"></input> 
+        <div id="result"></div>
+    </body>
+    <script type="text/javascript">
+    $(function(){
+        var stops=[];//存储路径起始点
+        var showSegmt=[];//存储寻路结果信息
+        var netWork = new NetWork(roads);
+		netWork.build();
+ 
+    	//创建地图对象
+    	map = $("#map").jqMap();    	
+    	//链式调用
+        map.setSize([955,600])
+            .setNetWork(netWork)
+            .setBbox([13426192.883026948,3671416.5248470777,13430755.218152719,3674282.9134077714])
+            .show();
+    	var navitool=new NavigationTool();
+    	navitool.setMap(map);
+    	//创建文字描述对象
+    	routeResult = $("#result").routeResult(); 
+    	routeResult.bind("item:click",function(event,data){
+    		console.log(data);
+    		map.centerAt(data.getTurnP());
+    	});
+    	
+        $("#oneLevelOut").bind("click",map.zoomOut);
+        $("#oneLevelIn").bind("click",map.zoomIn);
+        $("#left").bind("click",function(){
+            map.move("left");
+        });
+        $("#right").bind("click",function(){
+            map.move("right");
+        });
+        $("#up").bind("click",function(){
+            map.move("up");
+        });
+        $("#down").bind("click",function(){
+            map.move("down");
+        });
+        $("#clear").bind("click",function(){
+        	stops=[];
+            map.show();
+            routeResult.clear();
+        });
+       
+        $("#zoomIn").bind("click",function(){
+        	navitool.activate("zoomin");
+        });
+        
+        $("#zoomOut").bind("click",function(){
+        	navitool.activate("zoomout");
+        });
+        $("#pan").bind("click",function(){
+        	navitool.activate("pan");
+        });
+        $("#preView").bind("click",function(){
+        	navitool.zoomToPrevExtent();
+        });
+        $("#nextView").bind("click",function(){
+        	navitool.zoomToNextExtent();
+        });
+        $("#reSet").bind("click",function(){
+        	navitool.deactivate();
+        });
+       
+        $("#findRoute").bind("click",function(){
+        	stops=[];
+        	map.unbind("MapClickEvent",onMapClickHandle);
+        	map.bind("MapClickEvent",onMapClickHandle);
+        });
+        
+        /**
+        *mapClick处理函数
+        */
+        var onMapClickHandle=function(event,mapClick){
+            map.drawPoint(mapClick.pixel,"red");
+            stops.push(mapClick.lolat);    
+            if(stops.length>1){
+                var startendP=[stops[stops.length-2],stops[stops.length-1]];
+                console.log("start id"+startendP[0].getId(),"end id"+startendP[1].getId());
+                var routeEngine = new RouteEngine(netWork);
+                //最短路径从起点到终点的数组
+                var finalRoute=routeEngine.doS(startendP);
+                //绘制结果路径
+                map.drawFinalroute(finalRoute);
+                //最终路径结果路段信息
+                //文字导航
+                showSegmt=routeEngine.txtAnnotate(finalRoute);
+                routeResult.setResultSegments(showSegmt).show();
+            }
+         };
+    });
+    </script>
+</html>

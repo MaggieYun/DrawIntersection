@@ -1,0 +1,16 @@
+<meta charSet="utf-8">
+<style>
+#map{
+	border:solid #cccccc 1px;
+}
+</style>
+<script type="text/javascript" src="resources/javascript/jquery.js"></script>
+<body>
+	<canvas id="map" width="955" height="600"></canvas>
+	<br/>
+	<input type="button" value="生成路径" onclick="draw_route();"></input>
+	起点:<input type="text" id="startNode" ></input>
+	终点:<input type="text" id="endNode"></input>
+	<input type="button" value="寻找最短路径" onclick="route();"></input>
+</body>
+<script type="text/javascript" src="resources/javascript/route.js"></script>

@@ -1,0 +1,19 @@
+package net.yhte.gis.zxy.cores;
+
+/**
+ * 输入的经纬度
+ * @author 张小颖
+ *
+ */
+public class InsertLL {
+	/**
+	 * 输入坐标初始经度
+	 */
+	public  double start_x;
+	/**
+	 * 初始纬度
+	 */
+	public  double start_y;
+	public  double end_x;
+	public  double end_y;
+}

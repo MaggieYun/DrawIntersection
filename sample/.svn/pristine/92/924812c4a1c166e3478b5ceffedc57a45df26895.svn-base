@@ -1,0 +1,17 @@
+package net.yhte.gis.zxy.cores;
+
+/**
+ * 
+ * @author 张小颖
+ *
+ */
+public class Parameter {
+	/**
+	 * 所有输入数据
+	 */
+	public static int xmin;
+	public static int xmax;
+	public static int ymin;
+	public static int ymax;
+	public static int lev;
+}

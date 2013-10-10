@@ -1,0 +1,325 @@
+html, body, p, ul, li, h1, input, form {
+    margin: 0;
+    padding: 0;
+}
+body, input {
+    font: 12px Verdana,Arial,Helvetica,sans-serif;
+}
+body {
+    background: none repeat scroll 0 0 white;
+}
+ul, li {
+    list-style: none outside none;
+}
+img {
+    border: medium none;
+}
+a {
+    color: #03309D;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.gray {
+    color: #868686;
+}
+
+
+.container {
+    margin: 20px auto 0;
+    min-height: 500px;
+    width: 800px;
+}
+
+.header {
+    height: 72px;
+    overflow: hidden;
+}
+.header .logo {
+    float: left;
+    margin-top: 4px;
+}
+.header .header_link {
+    background: none repeat scroll 0 0 #EAF3FF;
+    border-radius: 4px 4px 4px 4px;
+    color: #CCCCCC;
+    line-height: 30px;
+    margin: 20px 0 0 205px;
+    padding-right: 12px;
+    text-align: right;
+}
+.header .header_link li {
+    display: inline;
+}
+.header .header_link a {
+    padding: 0 4px;
+}
+
+
+.login_container {
+    float: right;
+}
+.login_box {
+    background: none repeat scroll 0 0 #EDF5FF;
+    border: 1px solid #ACC3E4;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+    margin-right: 4px;
+    padding: 20px;
+    position: relative;
+    width: 305px;
+    z-index: 11;
+}
+.login_box h1 {
+    color: #274571;
+    font-size: 16px;
+}
+.login_box .login_https {
+    margin-top: -16px;
+    text-align: right;
+}
+.login_box .login_operate {
+    padding: 12px 0 20px;
+}
+.login_operate .username, .login_operate .password, .login_operate .about_password, .login_operate .login_submit {
+    padding: 5px 0;
+    position: relative;
+    width: 305px;
+}
+.login_operate .login_submit .login_cancel {
+    margin-left: 12px;
+}
+.login_operate .username {
+    height: 38px;
+    position: relative;
+}
+.login_operate .about_password {
+    padding: 4px 0;
+}
+.login_operate .vfcodeinput {
+    height: 55px;
+    padding-bottom: 3px;
+}
+.login_box .txt {
+    -moz-transition: box-shadow 0.1s linear 0s;
+    background: none repeat scroll 0 0 transparent;
+    border: 1px solid #9DADC5;
+    border-radius: 3px 3px 3px 3px;
+    color: #494949;
+    font-size: 20px;
+    height: 34px;
+    line-height: 34px;
+    outline: medium none;
+    padding: 0 4px;
+    position: relative;
+    width: 295px;
+}
+.login_box .alias {
+    padding-right: 125px;
+    width: 174px;
+}
+.login_domain {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("../images/login_ico_selector091534.gif") no-repeat scroll 105px -25px #FBFBFB;
+    border-color: -moz-use-text-color -moz-use-text-color -moz-use-text-color #D5DEEC;
+    border-radius: 0 3px 3px 0;
+    border-style: none none none solid;
+    border-width: medium medium medium 1px;
+    box-shadow: -1px 0 2px rgba(0, 0, 0, 0.09);
+    color: #4D4D4C;
+    cursor: pointer;
+    font-size: 18px;
+    height: 31px;
+    line-height: 32px;
+    padding: 0 0 3px 8px;
+    position: absolute;
+    right: 1px;
+    top: 6px;
+    width: 112px;
+    z-index: 1;
+}
+.active .login_domain, .login_domain:hover {
+    background-color: #F7FAFE;
+    background-position: 105px 11px;
+}
+
+.login_domains_show {
+    -moz-animation-duration: 0.1s;
+    -moz-animation-name: domains_show;
+    -moz-animation-timing-function: ease-out;
+}
+.login_domains_show .auto_item:first-child {
+    -moz-animation-duration: 0.1s;
+    -moz-animation-name: domains_show_item;
+    -moz-animation-timing-function: ease-out;
+}
+.login_box .txt {
+    line-height: normal;
+}
+.login_box .txt_default, .login_box .txt_dim {
+    background: url("../images/login091531.png") no-repeat scroll -1px -97px white;
+    border-radius: 3px 3px 3px 3px;
+    color: #8B9096;
+    font-size: 14px;
+    height: 34px;
+    left: 1px;
+    line-height: 34px;
+    padding: 0 7px;
+    position: absolute;
+    top: 6px;
+    width: 289px;
+}
+.login_operate .username_immutable {
+    background: none repeat scroll 0 0 transparent;
+    color: #494949;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 0;
+}
+.login_box .txt_dim {
+    color: #DCDDDF;
+}
+.login_box .txt:focus {
+    border: 1px solid #9BBBDA;
+    box-shadow: 0 0 5px rgba(110, 189, 222, 0.5);
+}
+.login_box .about_password {
+    padding: 4px 0;
+}
+.login_box .remerber_password {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+.login_box .about_password a {
+    position: absolute;
+    right: 0;
+}
+.login_box .captips {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FDF6AA;
+    border-color: #DBC492 #B49366 #B49366 #DBC492;
+    border-style: solid;
+    border-width: 1px;
+    left: 0;
+    padding: 1px;
+    position: absolute;
+    top: 43px;
+    z-index: 20;
+}
+
+.login_operate .login_submit {
+    clear: both;
+}
+
+
+
+.login_box .login_tips {
+    line-height: 18px;
+    padding-top: 15px;
+}
+.login_box .login_tips p {
+    margin-top: 3px;
+}
+.login_box .login_box_msg {
+    color: red;
+    margin: 12px 0 -4px;
+}
+.login_box .noCookie, .login_box .noScript {
+    background: none repeat scroll 0 0 #FFF9E3;
+    border: 1px solid #FADC80;
+    color: black;
+    line-height: 1.5;
+    padding: 6px;
+}
+.autocomplete {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #9BBBDA;
+    border-radius: 3px 3px 3px 3px;
+    box-shadow: 0 0 3px rgba(110, 189, 222, 0.5);
+    color: #4D4D4C;
+    display: block;
+    margin: 1px 0 0;
+    outline: medium none;
+    overflow: hidden;
+    padding: 5px 0;
+    position: absolute;
+    right: -6px;
+    top: -35px;
+    width: 130px;
+    z-index: 3;
+}
+
+.map_advert {
+    height: 214px;
+    overflow: hidden;
+    padding: 20px 0 0 16px;
+}
+.map_advert .advert_pic {
+    float: left;
+}
+.map_advert .advert_txt {
+    float: left;
+    margin-top: 5px;
+    padding-left: 14px;
+}
+.map_advert h1 {
+    font-size: 16px;
+    line-height: 26px;
+    padding-top: 5px;
+}
+.map_advert p {
+    font-size: 14px;
+    line-height: 24px;
+}
+.map_advert h1 {
+    margin-bottom: 6px;
+}
+.map_advert p {
+    font-weight: normal;
+}
+.map_advert .operate {
+    margin-top: 26px;
+}
+.map_intro {
+    margin-left: 16px;
+    width: 400px;
+}
+.map_intro h1 {
+    display: none;
+}
+.map_intro ul {
+    line-height: 20px;
+}
+.map_intro ul li {
+    list-style: disc outside none;
+    margin-left: 12px;
+}
+.footer {
+    clear: both;
+    padding-top: 27px;
+    text-align: center;
+}
+.footer .footer_link {
+    background: none repeat scroll 0 0 #EAF3FF;
+    border-radius: 4px 4px 4px 4px;
+    line-height: 30px;
+}
+.footer .footer_link li {
+    display: inline;
+}
+.footer .footer_link a {
+    padding: 0 4px;
+}
+.footer p {
+    line-height: 1.5;
+    margin: 3px 0 0;
+}

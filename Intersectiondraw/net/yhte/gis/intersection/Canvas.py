@@ -1,0 +1,67 @@
+#coding=UTF-8
+import Image, ImageDraw
+
+try:
+	import json
+except ImportError:
+	import simplejson as json
+
+class Canvas():
+	"""docstring for Canvas"""
+	def __init__(self,draw):
+		self.draw=draw
+
+
+	def load(self):
+		'''
+		获取路口源数据
+		'''
+
+		return
+
+	def drawline(self,line,fill,width):
+		'''
+		画直线,此例中即画路口每个方向的中心线（双黄线）
+		'''
+		self.draw.line((line.boundp1,line.boundp2),fill=fill,width=width)  
+
+	def draw_palline(self,line,fill):
+		'''
+		画某条线的平行线
+		@line:即其平行线
+		@i:右边第i个平行线
+		'''
+		self.draw.line((line.pal_boundp1,line.pal_boundp2),fill=fill,width=1)  
+
+	def draw_left_line(self,line,fill):
+		self.draw.line((line.leftpal_boundp1,line.leftpal_boundp2),fill=fill,width=1)  
+
+	# def draw_center_area(self,linelist,fill,outline):
+	# 	'''
+	# 	画路口的中心空白区
+	# 	'''
+	# 	self.draw.polygon(linelist,fill=fill,outline=outline)
+
+	def draw_area(self,linelist,fill,outline):
+		'''
+		画路口的中心空白区
+		'''
+		self.draw.polygon(linelist,fill=fill,outline=outline)
+
+	def draw_lines(self,lines,fill,width):
+		'''
+		画线（折线）
+		'''
+		self.draw.line(lines,fill=fill,width=width)  
+		
+
+		
+
+
+
+
+
+
+	# def save(self,path):
+	# 	self.draw.save(0)			
+	

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery边滚边停顿的单行文字滚动代码 - 烈火网 Veryhuo.COM</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+	;
+	(function($) {
+		$.fn.extend({
+			"myFocus" : function(opts) {
+				opts = $.extend({
+					thumbObj : null,
+					auto : true,
+					changeTime : 3000,
+					speed : 400,
+					type : "left"
+				}, opts || {});
+				var obj = $(this), parent = obj.parent();
+				pObj =obj.parent().attr("id");
+				len = obj.length, 
+				nextOne = 0, 
+				d = 1, 
+				oLiwid = obj.eq(0).outerWidth(),
+				oLiHeight = obj.eq(0).outerHeight(),
+				timer = null;
+				//切换方式的方法
+				function change() {
+					if (opts.type == "top") {
+						parent.animate({
+							marginTop : "-" + (oLiHeight * nextOne) + "px"
+						}, opts.speed);
+						return d = 0;
+					} else {
+						parent.animate({
+							marginLeft : "-" + (oLiwid * nextOne) + "px"
+						}, opts.speed);
+					}
+				}
+				change();
+
+				//自动切换方法
+				function autoPlay() {
+					nextOne++;
+					if (nextOne >= len) {
+						nextOne = 0;
+					}
+					$(opts.thumbObj).eq(nextOne).addClass("curr").siblings()
+							.removeClass("curr");
+					change();
+				}
+				//
+				clearInterval(timer);
+				timer = null;
+				if (opts.auto) {
+					timer = setInterval(autoPlay, opts.changeTime);
+				}
+				;
+			}
+		});
+	})(jQuery);
+	$(function() {
+		$("#box li").myFocus({
+			type : "top"
+		});
+	});
+</script>
+<style type="text/css">
+* {
+	padding: 0;
+	margin: 0;
+}
+
+ul,li {
+	list-style: none;
+}
+
+#box {
+	height: 18px;
+	width: 300px;
+	overflow: hidden;
+	margin: 50px auto;
+}
+</style>
+</head>
+<body>
+	<div id="box">
+		<ul>
+			<li>昨夜寒蛩不住鸣。烈</li>
+			<li>惊回千里梦，已三更。火。</li>
+			<li>起来独自绕阶行。网</li>
+			<li>人悄悄帘外月胧明，</li>
+			<li>白首为功名，旧山松竹老，阻归程</li>
+			<li>欲将心事付瑶琴，</li>
+			<li>知音少，玄断有谁听。</li>
+		</ul>
+	</div>
+</body>
+</html>

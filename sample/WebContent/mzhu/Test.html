@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <title> new document </title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <script type="text/javascript" src="js/jquery-1.5.2.min.js"></script>
+  
+ <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
+ <script type="text/javascript" src="js/jquery.marquee.js"></script>
+ <script type="text/javascript" src="js/IBSMenuItem.js"></script>
+ <script type="text/javascript" src="js/IBSMenu.js"></script>
+ <script type="text/javascript" src="js/IBSPanel.js"></script>
+ <script type="text/javascript" src="js/menu.js"></script>
+ <script type="text/javascript" src="js/tiny_mce.js"></script>
+ <link type="text/css" href="css/jquery.marquee.min.css" rel="stylesheet" title="default" media="all" />
+ <link type="text/css" href="css/menu.css" rel="stylesheet" title="default" media="all" />
+  </head>
+
+ <body onload="init()">
+
+	<script>
+	  index = -1;
+	  var ibsPanel;
+	  
+	  var init = function(){
+	  	  ibsPanel = new IBSPanel("ibsPanel","http://172.16.64.25:8081/lbs/CmsInfo?cmsId=00129");
+        
+        tinyMCE.init({
+					// General options
+					mode : "textareas",
+					theme : "advanced",
+					plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave,visualblocks",
+			
+					// Theme options
+					//theme_advanced_buttons1 : "bold",
+					theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect",
+					theme_advanced_buttons2 : "cut,copy,paste,|,bullist,numlist,|,sub,sup,|,outdent,indent,|,undo,redo,|,image,|,insertdate,inserttime,|,forecolor,backcolor",
+					//theme_advanced_buttons3 : "",
+					//theme_advanced_buttons4 : "insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft,visualblocks",
+					theme_advanced_toolbar_location : "top",
+					theme_advanced_toolbar_align : "left",
+					theme_advanced_statusbar_location : "bottom",
+					theme_advanced_resizing : true,
+			
+					// Example content CSS (should be your site CSS)
+					content_css : "css/content.css",
+			
+					// Style formats
+					style_formats : [
+						{title : 'Bold text', inline : 'b'},
+						{title : 'Red text', inline : 'span', styles : {color : '#ff0000'}},
+						{title : 'Red header', block : 'h1', styles : {color : '#ff0000'}},
+						{title : 'Example 1', inline : 'span', classes : 'example1'},
+						{title : 'Example 2', inline : 'span', classes : 'example2'},
+						{title : 'Table styles'},
+						{title : 'Table row 1', selector : 'tr', classes : 'tablerow1'}
+					]
+				});
+				
+	  };
+	  
+	  var play = function(){
+	  	$("#menubar").hide();
+	  	ibsPanel.play();
+	  };
+	  
+	  var adjust = function(){
+			var x = $("#x").val();
+			var y = $("#y").val();
+			var width = $("#width").val();
+			var height = $("#height").val();
+			//ibsPanel.position(x, y);
+			$("#container").css({ position:"absolute" , left:x+"px", top:y+"px"});
+			//ibsPanel.size(width, height);
+			$("#sizePanel").hide();
+	  }
+	  
+	  var showMenu = function(){
+	  		$("#menubar").toggle();
+	  }
+	  
+	  var setSize = function(){
+	  		$("#menubar").hide();
+	  		$("#sizePanel").show();
+	  }
+	  
+	  var setEdit = function(){
+	  		index = ibsPanel.getCurItemIndex();
+	  		var html = ibsPanel.getCurItem().getShowFormat();
+	  		var str = html.html();
+				tinyMCE.get('elm1').setContent(str);
+
+	  		$("#menubar").hide();
+	  		$("#editPanel").show();
+	  }
+	  
+	  var updateItem = function(){
+	  	var content = tinyMCE.get('elm1').getContent();
+	  	var config = {"content":content,"endMinute":59,"endHour":23};
+      var ibsMenuItem = new IBSMenuItem(config);
+      ibsPanel.updateItem(ibsMenuItem,index);
+      $("#editPanel").hide();
+	  }
+	 
+
+	
+
+	</script>
+<div id="container">
+	<!-- 分类菜单 START -->
+	<div id="menubar">
+		<ul id="menus" class="menus">
+			<li><a href="javascript:void(0);" title="设置">设置</a>
+				<ul class="children">
+					<li><a href="javascript:play();" title="开始播放">播放</a></li>
+					<li><a href="javascript:setSize();" title="窗口参数">窗口参数</a></li>
+					<li><a href="javascript:setEdit();" title="演播列表修改">演播列表修改</a></li>
+				</ul>
+			</li>
+			</ul>
+	</div>
+	<!-- 分类菜单 END -->
+	<div id="ibsPanel" onclick="showMenu();"></div>
+<!--
+</div>	
+-->
+<div id="sizePanel" class="panel">
+	X坐标：<input type="text" id="x"/> Y坐标：<input type="text" id="y"/>  
+	<button id="adjust" onclick="adjust();">调整位置</button>
+</div>
+
+<div id="editPanel" class="panel">
+		<textarea id="elm1" name="elm1" rows="15" cols="80" style="width: 80%">
+			&lt;p&gt;
+				This is some example text that you can edit inside the &lt;strong&gt;TinyMCE editor&lt;/strong&gt;.
+			&lt;/p&gt;
+			&lt;p&gt;
+			Nam nisi elit, cursus in rhoncus sit amet, pulvinar laoreet leo. Nam sed lectus quam, ut sagittis tellus. Quisque dignissim mauris a augue rutrum tempor. Donec vitae purus nec massa vestibulum ornare sit amet id tellus. Nunc quam mauris, fermentum nec lacinia eget, sollicitudin nec ante. Aliquam molestie volutpat dapibus. Nunc interdum viverra sodales. Morbi laoreet pulvinar gravida. Quisque ut turpis sagittis nunc accumsan vehicula. Duis elementum congue ultrices. Cras faucibus feugiat arcu quis lacinia. In hac habitasse platea dictumst. Pellentesque fermentum magna sit amet tellus varius ullamcorper. Vestibulum at urna augue, eget varius neque. Fusce facilisis venenatis dapibus. Integer non sem at arcu euismod tempor nec sed nisl. Morbi ultricies, mauris ut ultricies adipiscing, felis odio condimentum massa, et luctus est nunc nec eros.
+			&lt;/p&gt;
+		</textarea>
+	  <a href="javascript:;" onclick="updateItem();">[Get contents]</a>
+</div>
+
+<div id="test2"></div>
+
+</body>
+</html>
+

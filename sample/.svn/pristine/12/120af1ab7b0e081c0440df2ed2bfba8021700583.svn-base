@@ -1,0 +1,38 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+/**
+ * @author 许照云
+ *
+ */
+public class DownLoadFile{
+	
+
+	/**
+	 * @param base 文件的URL地址
+	 * @param fileName  要写入文件的本地文件路径
+	 * @throws IOException
+	 */
+	public static void download(String base, String fileName) throws IOException {
+		// 读文件
+		URL url = new URL(base);
+		InputStream remoteStream = url.openStream();
+		byte[] bytes = new byte[remoteStream.available()];
+		if ((bytes.length) != -1) {
+			remoteStream.read(bytes);
+		}
+		File file = new File(fileName);
+		// 写文件
+		FileOutputStream outStream = new FileOutputStream(file);
+		BufferedOutputStream buff = new BufferedOutputStream(outStream);
+		buff.write(bytes);
+		buff.flush();
+		buff.close();
+	}
+}

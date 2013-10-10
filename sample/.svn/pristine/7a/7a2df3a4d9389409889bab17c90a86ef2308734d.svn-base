@@ -1,0 +1,134 @@
+var Draw = function() {
+	var xmin = 13426192.883026948;
+	var ymin = 3671416.5248470777;
+	var xmax = 13430755.218152719;
+	var ymax = 3674282.9134077714;
+	var scale = 955 / (xmax - xmin);
+
+	/**
+	 * 实现canvas的绘制起点
+	 * @param point  点
+	 * @param canvas 画布对象
+	 * @returns
+	 */
+	var canvasMoveTo = function(point, canvas) {
+		var x = point[0];
+		var y = point[1];
+		canvas.moveTo(x, y);
+	};
+	
+	/**
+	 * 实现canvas的绘制终点
+	 * @param point 点
+	 * @param canvas 画布对象
+	 * @returns
+	 */
+	var canvasLineTo = function(point, canvas) {
+		var x = point[0];
+		var y = point[1];
+		canvas.lineTo(x, y);
+	};
+	
+	/**
+	 * 实现canvas的绘线
+	 * @param point 点
+	 * @param canvas 画布对象
+	 * @param r 半径
+	 * @returns
+	 */
+	var canvasDrawLine = function(point1, point2, canvas) {
+		ctx.beginPath();
+		canvasMoveTo(point1, canvas);
+		canvasLineTo(point2, canvas);
+		canvas.stroke();
+	};
+
+	/**
+	 * 转换点坐标
+	 * @param points
+	 * @returns 返回点坐标数组[x,y]
+	 */
+	this.pointsConvert = function(points) {
+		var newPs = [];
+		for ( var i = 0; i < points.length; i++) {
+			newPs[i] = convert(points[i]);
+		}
+		return newPs;
+	};
+
+	/**
+	 * 坐标转换
+	 * @param point
+	 * @returns 每个点的[x,y,id]
+	 */
+	var convert = function(point) {
+		var x = point.getX();
+		var y = point.getY();
+		var id = point.getId();
+		x = Math.round((x - xmin) * scale);
+		y = Math.round((ymax - y) * scale);
+		return [ x, y, id ];
+	};
+
+	/**
+	 * 以路段为基础数据绘路
+	 * @param segments 路段
+	 * @param canvas 画布
+	 */
+	this.drawLine = function(lines, canvas) {
+		canvas.strokeStyle = "black";
+		canvas.lineWidth=1;
+		for(var i=0;i<lines.length;i++){
+			canvasDrawLine(lines[i][0], lines[i][1], canvas);
+			canvas.stroke();
+		}
+	};
+	
+	/**
+	 * 从segment中提取起始点值
+	 * @param segments 路段
+	 * @param canvas 画布
+	 */
+	this.getLinePs = function(segments) {
+		var LinePs=[];
+		for ( var i = 0; i < segments.length; i++) {
+			var startP = convert(segments[i].getStartP());
+			var endP = convert(segments[i].getEndP());
+            var linep=[startP,endP];
+            LinePs.push(linep);
+		}
+		return LinePs;
+	};
+	/**
+	 * 以连续点为为基础数据绘路
+	 * @param pointsArr 路段
+	 * @param canvas 画布
+	 */
+	this.drawPolyline = function(pointsArr, canvas) {
+		canvas.strokeStyle = "red";
+		canvas.beginPath();
+		var p0 = convert(pointsArr[0]);
+		canvasMoveTo(p0, canvas);
+		for ( var i = 1; i < pointsArr.length; i++) {
+			canvas.lineWidth=3;
+			var pi = convert(pointsArr[i]);
+			canvasLineTo(pi, canvas);
+		}
+		canvas.stroke();
+	};
+
+	/**
+	 * 添加序列号
+	 * @param points 点数据
+	 * @param canvas 画布
+	 */
+	this.drawtxt = function(points, canvas) {
+		for ( var i = 0; i < points.length; i++) {
+			var x = points[i][0];
+			var y = points[i][1];
+			var id = points[i][2];
+			// canvas.arc(x,y,5,0,Math.PI*2,true);
+			canvas.fillText(id, x + 5, y + 5);
+		}
+	};
+};

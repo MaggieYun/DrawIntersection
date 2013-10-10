@@ -1,0 +1,92 @@
+#coding=UTF-8
+
+from net.yhte.gis.intersection.Line import Line
+from net.yhte.gis.intersection.Canvas import Canvas
+from net.yhte.gis.intersection.Point import Point
+import Image,ImageDraw
+import math
+
+
+if __name__ == '__main__':
+	size=(400,400)
+	im=Image.new("RGBA",size,"#f4f3ef")   #初始化一张图片，大小为整个路口的size
+	draw = ImageDraw.Draw(im)
+
+	canvas=Canvas(draw)
+
+	center = Point(200,200)
+	p1 = Point(0,0)
+	p2 = Point(400,200)
+	p3 = Point(200,400)
+	# print center.x
+
+	line1 = Line(center,p1)
+	line1.get_k()
+	line1.get_b()
+	line1.get_boundp(size)
+	line1.get_leftpal_boundp(4)
+	print line1.k
+
+	line2 = Line(center,p2)
+	line2.get_k()
+	line2.get_b()
+	line2.get_boundp(size)
+	line2.get_leftpal_boundp(3)
+	print line2.k,line2.b,line2.boundp1,line2.boundp2
+
+	line3 = Line(center,p3)
+	line3.get_k()
+	line3.get_b()
+	line3.get_boundp(size)
+	line3.get_leftpal_boundp(3)
+	print line3.k
+
+	canvas.drawline(line1,"red",4)
+	canvas.drawline(line2,"blue",4)
+	canvas.drawline(line3,"green",4)
+	# canvas.drawline(line1,"white",2)
+	# canvas.drawline(line2,"white",2)
+	# canvas.drawline(line3,"white",2)
+
+	canvas.draw_palline(line1,0,"black")
+	canvas.draw_palline(line2,0,"black")
+	canvas.draw_palline(line3,0,"black")
+	for i in range(1,5):
+		line1.get_pal_boundp(i)
+		canvas.draw_palline(line1,i,"black")
+	for i in range(1,4):	
+		line2.get_pal_boundp(i)
+		canvas.draw_palline(line2,i,"black")
+	for i in range(1,4):	
+		line3.get_pal_boundp(i)
+		canvas.draw_palline(line3,i,"black")
+
+
+	line1.get_angle()
+	line2.get_angle()
+	line3.get_angle()
+	print line1.angle,line2.angle,line2.angle
+
+	line1p0=center.move(line1.angle,50)
+	line1p1=line1p0.move(line1.angle+math.pi/2,4*10)
+	line1p2=line1p0.move(line1.angle-math.pi/2,4*10)
+
+	line2p0=center.move(line2.angle,50)
+	line2p1=line2p0.move(line2.angle+math.pi/2,3*10)
+	line2p2=line2p0.move(line2.angle-math.pi/2,3*10)
+
+	line3p0=center.move(line3.angle,50)
+	line3p1=line3p0.move(line3.angle+math.pi/2,3*10)
+	line3p2=line3p0.move(line3.angle-math.pi/2,3*10)
+	
+	print line1p0
+
+	linelist=[(line1p1.x,line1p1.y),(line1p2.x,line1p2.y),(line3p1.x,line3p1.y),(line3p2.x,line3p2.y),(line2p1.x,line2p1.y),(line2p2.x,line2p2.y)]
+	print linelist
+	canvas.draw_center_area(linelist,"#f4f3ef","black")
+
+
+
+	# print line1.attr1,line1.attr2
+	# last_im=im.rotate(90)
+	im.save(r"c:\result.png","png")	

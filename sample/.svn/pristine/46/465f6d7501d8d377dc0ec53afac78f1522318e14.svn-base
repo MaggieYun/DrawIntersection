@@ -1,0 +1,43 @@
+#coding=UTF-8
+# import urllib
+
+import json
+
+#定义全局变量  地理坐标基本数据
+#_xmin=13426192.883026948
+#_ymin=3671416.5248470777
+#_xmax=13430755.218152719
+#_ymax=3674282.9134077714
+#_scale=955/(_xmax-_xmin)
+
+class Convert():
+    '''
+    屏幕坐标与地理坐标的相互转换
+    
+    '''
+    def __init__(self,size,bbox):
+        '''
+        @param size 2-tuple (width,height):网页上显示图片的div长宽
+        @param bbox 4-tuple (xmin,ymin,xmax,ymax):地理范围
+        '''
+        self.size = size
+        self.bbox = bbox
+        self.scale=self.size[0]/(self.bbox[2]-self.bbox[0])
+ 
+    def gemtry_to_screen(self, Vertex):
+        """
+        @param Vertex: 点类中的每一个具体项
+                    首先将点位的地理坐标从roads字典数组中取出
+                    将地理坐标转化为屏幕坐标
+        """               
+        screenX = int(self.scale * (Vertex.x - self.bbox[0]))
+        screenY = int(self.scale * (self.bbox[3] - Vertex.y))
+        return [screenX, screenY]
+    
+    def screen_to_gemtry(self,screenX,screenY):
+        """
+                    屏幕坐标转换为地理坐标
+        """
+        gemtryX=screenX/(self.scale)+self.bbox[0]
+        gemtryY=self.bbox[3]-screenY/self.scale  
+        return [gemtryX,gemtryY]

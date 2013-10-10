@@ -1,0 +1,47 @@
+package net.yhte.gis.xzyun.cores;
+
+import java.io.IOException;
+
+import net.yhte.gis.xzyun.api.GetParameters;
+import net.yhte.gis.xzyun.api.StartDownTile;
+import net.yhte.gis.xzyun.api.ValidateArguments;
+
+/**
+ * 
+ * @author 许照云
+ */
+public class TileSystem2 {
+	/**
+	 * 
+	 * @param args
+	 * @throws IOException
+	 */
+
+	public static void main(String[] args) throws IOException {
+		//System.out.println("请输入等级范围：");
+		//System.out.println("like:n1 n2(n1<n2,0<=n<=19)");
+		//System.out.println("请输入左下角点和右上角点的纬度和经度：");
+		//System.out.println("like:x1 y1 x2 y2(x1<x2,y1>y2,-85<x<85,-180<y<180)");
+		boolean boolgeo = ValidateArguments.validateArgumentsGeo(args);
+		if (!boolgeo) {
+			System.out.println("您输入的地理坐标不符要求 请重新输入");
+			return;
+		}
+
+		boolean boollv = ValidateArguments.validateArgumentsLv(args);
+		if (!boollv) {
+			System.out.println("您输入的等级范围不符要求 请重新输入");
+			return;
+		}
+
+		double[] geocord1 = GetParameters.getgeocord(args);
+		int[] lv1 = GetParameters.getlv(args);
+
+		//TileSystem2 tileSystem = new TileSystem2(); 
+		// 这样使用的好处是什么？如何考虑线程
+		StartDownTile.startdowntile(lv1[0], lv1[1], geocord1[0], geocord1[1], geocord1[2],
+				geocord1[3]); // (多此一举 不用这样做，静态方法即可)
+
+	}
+
+}

@@ -1,0 +1,22 @@
+#coding=UTF-8
+import os.path
+from main import DrawIntersectionHandler
+
+
+import tornado.ioloop
+import tornado.web
+
+def startup(port):
+
+    application = tornado.web.Application([
+        (r"/intersectionDraw",renderHandler), 
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.dirname(__file__)+ os.sep + "sample"}),
+    ])
+    
+    
+    application.listen(port)
+    print u"程序已经启动"
+    tornado.ioloop.IOLoop.instance().start()
+
+if __name__ == "__main__":
+    startup(8888)

@@ -1,0 +1,30 @@
+package net.yhte.gis.xzyun.api;
+
+import java.io.IOException;
+
+/**
+ * @author Administrator
+ *
+ */
+public class TestSet {
+
+	/**
+	 * @param args
+	 * @throws IOException 
+	 */
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		Settings settings=new Settings("c:/settings.txt");
+//		String config=settings.get("levels");
+//		System.out.println(config);
+		
+		settings.set("name", "xuzhaoyun");
+		settings.set("sex", "female", "性别");
+		System.out.println("参数设置完毕");
+		
+		
+	
+
+	}
+
+}
